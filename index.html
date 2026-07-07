@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Krishan Lottery - Daily Content Panel</title>
+    <title>Krishan Lottery - Smart Panel</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ---------- Your Existing Styles ---------- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Roboto, Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 16px; }
         .container { max-width: 1000px; margin: 0 auto; }
         .card { background: white; border-radius: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
         .card-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 32px 24px; text-align: center; }
-        .logo { width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; overflow: hidden; }
-        .logo-placeholder { font-size: 40px; font-weight: bold; color: #667eea; }
+        .logo { width: 90px; height: 90px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; overflow: hidden; }
+        .logo img { width: 100%; height: 100%; object-fit: cover; }
+        .logo-placeholder { font-size: 42px; font-weight: bold; color: #667eea; }
         .card-header h1 { font-size: 24px; margin-bottom: 8px; }
+        .card-header p { font-size: 14px; opacity: 0.9; }
         .card-body { padding: 28px; }
         .tabs { display: flex; gap: 12px; margin-bottom: 28px; border-bottom: 2px solid #e5e7eb; }
         .tab { flex: 1; text-align: center; padding: 12px; background: none; border: none; font-size: 16px; font-weight: 600; color: #6b7280; cursor: pointer; transition: all 0.3s; }
@@ -24,12 +25,13 @@
         .input-field { margin-bottom: 20px; }
         .input-field label { display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 14px; }
         .input-field label i { margin-right: 8px; color: #667eea; }
-        .input-field input, .input-field textarea { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 16px; font-size: 16px; transition: all 0.3s; }
+        .input-field input { width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 16px; font-size: 16px; transition: all 0.3s; }
         .input-field input:focus { outline: none; border-color: #667eea; }
         .input-field .hint { font-size: 12px; color: #9ca3af; margin-top: 6px; }
         .btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 16px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s; }
         .btn:active { transform: scale(0.98); }
         .btn-logout { background: linear-gradient(135deg, #ef4444 0%, #ec489a 100%); width: auto; padding: 10px 24px; }
+        .btn-whatsapp { background: #25D366; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .message { margin-top: 16px; padding: 12px; border-radius: 14px; text-align: center; font-size: 14px; }
         .message-error { background: #fee2e2; color: #dc2626; }
         .message-success { background: #dcfce7; color: #16a34a; }
@@ -39,6 +41,7 @@
         .user-info h3 { font-size: 18px; color: #333; }
         .user-info p { font-size: 13px; color: #6b7280; margin-top: 4px; }
         .session-info { font-size: 11px; color: #9ca3af; margin-top: 6px; }
+        .device-info { background: #f3f4f6; padding: 6px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
         .subscription-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px; border-radius: 24px; margin-bottom: 20px; text-align: center; }
         .subscription-card .price { font-size: 28px; font-weight: bold; }
         .subscription-card .expiry { font-size: 13px; margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.2); border-radius: 16px; }
@@ -46,12 +49,14 @@
         .bank-details { background: white; border-radius: 16px; padding: 16px; margin: 16px 0; }
         .bank-details p { margin: 8px 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .copy-btn { background: #f59e0b; color: white; border: none; padding: 4px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
+        .receipt-section { margin: 16px 0; padding: 16px; background: #f0fdf4; border-radius: 16px; border: 1px solid #bbf7d0; }
         .date-picker-container { background: white; border: 2px solid #667eea; border-radius: 24px; padding: 20px; margin-bottom: 24px; }
         .date-nav-buttons { display: flex; gap: 12px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
         .nav-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; }
         .today-btn { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
         .date-display { text-align: center; padding: 12px; background: #f3f4f6; border-radius: 16px; margin-bottom: 16px; }
         .selected-date { font-size: 18px; font-weight: 700; color: #667eea; }
+        .selected-date-info { font-size: 12px; color: #666; margin-top: 4px; }
         .filter-select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 12px; background: white; }
         .section { margin-bottom: 32px; }
         .section-title { font-size: 20px; font-weight: 600; color: #333; margin-bottom: 20px; padding-left: 12px; border-left: 4px solid #667eea; }
@@ -61,18 +66,18 @@
         .pdf-preview { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; }
         .pdf-preview i { font-size: 60px; color: white; }
         .pdf-info { padding: 16px; }
-        .pdf-name { font-weight: 600; margin-bottom: 12px; word-break: break-all; }
+        .pdf-name { font-weight: 600; margin-bottom: 12px; }
         .pdf-actions { display: flex; gap: 10px; }
         .action-btn { flex: 1; padding: 8px; border: none; border-radius: 12px; cursor: pointer; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
         .action-btn.view { background: #667eea; color: white; }
         .action-btn.download { background: #10b981; color: white; }
         .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .image-card { background: #f8f9fa; border-radius: 20px; overflow: hidden; transition: all 0.3s; border: 1px solid #e5e7eb; }
+        .image-card { background: #f8f9fa; border-radius: 20px; overflow: hidden; border: 1px solid #e5e7eb; transition: all 0.3s; }
         .image-card:hover { transform: translateY(-5px); }
         .image-preview { height: 200px; overflow: hidden; }
         .image-preview img { width: 100%; height: 100%; object-fit: cover; }
         .image-info { padding: 12px; }
-        .image-name { font-size: 12px; color: #666; margin-bottom: 8px; word-break: break-all; }
+        .image-name { font-size: 12px; color: #666; margin-bottom: 8px; }
         .image-actions { display: flex; gap: 8px; }
         .small-btn { flex: 1; padding: 6px; border: none; border-radius: 10px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; text-decoration: none; }
         .empty-state { text-align: center; padding: 60px 20px; background: #f9fafb; border-radius: 20px; color: #9ca3af; }
@@ -85,15 +90,7 @@
         .modal-close { background: none; border: none; font-size: 28px; cursor: pointer; }
         .modal-body { height: calc(100% - 60px); }
         .modal-body iframe { width: 100%; height: 100%; border: none; }
-        .share-section { text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
-        .share-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-        .share-btn { border: none; padding: 8px 20px; border-radius: 50px; cursor: pointer; font-size: 13px; color: white; }
-        .share-whatsapp { background: #25D366; }
-        .share-telegram { background: #0088cc; }
-        .share-facebook { background: #1877f2; }
-        .share-copy { background: #6b7280; }
         footer { text-align: center; margin-top: 16px; color: white; font-size: 11px; opacity: 0.7; }
-        .device-info { background: #f3f4f6; padding: 6px 12px; border-radius: 20px; display: inline-block; margin-top: 8px; font-size: 12px; }
         @media (max-width: 640px) { .card-body { padding: 20px; } .pdf-grid, .image-grid { grid-template-columns: 1fr; } .date-nav-buttons { flex-direction: column; } .nav-btn { justify-content: center; } }
     </style>
 </head>
@@ -101,9 +98,11 @@
     <div class="container">
         <div class="card">
             <div class="card-header">
-                <div class="logo"><div class="logo-placeholder">KL</div></div>
+                <div class="logo">
+                    <img src="https://firebasestorage.googleapis.com/v0/b/krishanlotterysystem.firebasestorage.app/o/logo%2Flogo_main%20(2).png?alt=media" alt="Krishan Lottery Logo" onerror="this.src='https://via.placeholder.com/90?text=KL'">
+                </div>
                 <h1><i class="fas fa-ticket-alt"></i> Krishan Lottery System</h1>
-                <p>Daily Content Panel - Monthly Subscription Rs. 500</p>
+                <p>Smart Access Panel - Monthly Rs. 500</p>
             </div>
             <div class="card-body">
                 <!-- Auth Section -->
@@ -114,18 +113,16 @@
                     </div>
                     <!-- Login Form -->
                     <div id="loginForm" class="form-container active">
-                        <div class="input-field"><label><i class="fas fa-phone"></i> දුරකථන අංකය</label><input type="tel" id="loginPhone" placeholder="077XXXXXXX" autocomplete="off"><div class="hint">📱 අංක 10කින් යුත් ඔබේ දුරකථන අංකය</div></div>
-                        <div class="input-field"><label><i class="fas fa-lock"></i> මුරපදය</label><input type="password" id="loginPassword" placeholder="ඔබගේ මුරපදය"></div>
+                        <div class="input-field"><label><i class="fas fa-phone"></i> දුරකථන අංකය</label><input type="tel" id="loginPhone" placeholder="077XXXXXXX" autocomplete="off"><div class="hint">📱 ඔබගේ දුරකථන අංකය ඇතුලත් කරන්න</div></div>
+                        <div class="input-field"><label><i class="fas fa-lock"></i> මුරපදය <span style="font-weight: normal; font-size: 12px;">(විකල්ප - Android App භාවිතා කරන්නන් සඳහා අවශ්‍ය නැත)</span></label><input type="password" id="loginPassword" placeholder="ඔබගේ මුරපදය"></div>
                         <button class="btn" onclick="login()"><i class="fas fa-sign-in-alt"></i> පිවිසෙන්න</button>
                         <div id="loginMessage"></div>
-                        <div class="share-section"><p style="color: #6b7280;">📢 මෙම යෙදුම අන් අය සමඟ බෙදා ගන්න</p>
-                        <div class="share-buttons"><button onclick="shareWhatsApp()" class="share-btn share-whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button><button onclick="shareTelegram()" class="share-btn share-telegram"><i class="fab fa-telegram"></i> Telegram</button><button onclick="shareFacebook()" class="share-btn share-facebook"><i class="fab fa-facebook"></i> Facebook</button><button onclick="copyLink()" class="share-btn share-copy"><i class="fas fa-link"></i> පිටපත් කරන්න</button></div></div>
                     </div>
                     <!-- Register Form -->
                     <div id="registerForm" class="form-container">
-                        <div class="input-field"><label><i class="fas fa-phone"></i> දුරකථන අංකය</label><input type="tel" id="regPhone" placeholder="077XXXXXXX"><div class="hint">📱 අංක 10කින් යුත් ඔබේ දුරකථන අංකය</div></div>
+                        <div class="input-field"><label><i class="fas fa-phone"></i> දුරකථන අංකය</label><input type="tel" id="regPhone" placeholder="077XXXXXXX"><div class="hint">📱 ඔබගේ දුරකථන අංකය</div></div>
                         <div class="input-field"><label><i class="fas fa-user"></i> සම්පූර්ණ නම</label><input type="text" id="regFullName" placeholder="ඔබගේ සම්පූර්ණ නම"></div>
-                        <div class="input-field"><label><i class="fas fa-lock"></i> මුරපදය</label><input type="password" id="regPassword" placeholder="මුරපදය (අකුරු 6ක් හෝ වැඩි)"></div>
+                        <div class="input-field"><label><i class="fas fa-lock"></i> මුරපදය</label><input type="password" id="regPassword" placeholder="මුරපදය (අකුරු 6ක් හෝ වැඩි)"><div class="hint">Android App එකෙන් පිවිසීම සඳහාද මෙම මුරපදයම භාවිතා වේ</div></div>
                         <div class="input-field"><label><i class="fas fa-check-circle"></i> මුරපදය තහවුරු කරන්න</label><input type="password" id="regConfirmPassword" placeholder="මුරපදය නැවත ඇතුලත් කරන්න"></div>
                         <button class="btn" onclick="register()"><i class="fas fa-user-plus"></i> ලියාපදිංචි වන්න</button>
                         <div id="registerMessage"></div>
@@ -133,7 +130,10 @@
                 </div>
                 <!-- Dashboard -->
                 <div id="dashboardView" style="display:none;">
-                    <div class="user-bar"><div class="user-info"><h3 id="welcomeUser"><i class="fas fa-user-circle"></i> ආයුබෝවන්!</h3><p id="userPhoneText"></p><div id="userStatusBadge"></div><div id="sessionInfo" class="session-info"></div><div id="deviceInfo" class="device-info"></div></div><button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ඉවත් වන්න</button></div>
+                    <div class="user-bar">
+                        <div class="user-info"><h3 id="welcomeUser"><i class="fas fa-user-circle"></i> ආයුබෝවන්!</h3><p id="userPhoneText"></p><div id="userStatusBadge"></div><div id="sessionInfo" class="session-info"></div><div id="deviceInfo" class="device-info"></div></div>
+                        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> ඉවත් වන්න</button>
+                    </div>
                     <div id="subscriptionInfo" class="subscription-card"></div>
                     <div id="paymentSection" style="display:none;">
                         <div class="payment-instructions"><h4><i class="fas fa-info-circle"></i> ගිණුම සක්‍රීය කර ගැනීමට</h4><p>📄 මාසික ගාස්තුව <strong>රු. 500/=</strong></p>
@@ -141,13 +141,14 @@
                         <p><i class="fas fa-envelope"></i> ගෙවීමෙන් පසු පහත තොරතුරු ඇතුලත් කරන්න:</p></div>
                         <div class="input-field"><label><i class="fas fa-credit-card"></i> ගෙවූ මුදල (රු.)</label><input type="number" id="paymentAmount" value="500"></div>
                         <div class="input-field"><label><i class="fas fa-calendar"></i> ගෙවූ දිනය</label><input type="date" id="paymentDate"></div>
-                        <div class="input-field"><label><i class="fas fa-file-alt"></i> ගෙවීම් සටහන</label><textarea id="paymentNote" rows="3" placeholder="ගෙවීම් ක්‍රමය, ගනුදෙනු අංකය..."></textarea></div>
-                        <button class="btn" onclick="notifyAdmin()"><i class="fas fa-bell"></i> පරිපාලකට දන්වන්න</button>
+                        <div class="input-field"><label><i class="fas fa-file-alt"></i> ගෙවීම් සටහන</label><textarea id="paymentNote" rows="2" placeholder="ගෙවීම් ක්‍රමය, ගනුදෙනු අංකය..."></textarea></div>
+                        <!-- WhatsApp Receipt Upload -->
+                        <div class="receipt-section"><h4 style="color: #166534;"><i class="fab fa-whatsapp"></i> ගෙවීම් රිසිට්පත එවන්න</h4><p style="font-size: 13px; color: #166534;">ගෙවීමෙන් පසු ඔබගේ රිසිට්පත (ඡායාරූපය හෝ PDF) පහත බොත්තම ඔබා WhatsApp වෙත එවන්න.</p><button class="btn btn-whatsapp" onclick="sendReceiptToAdmin()"><i class="fab fa-whatsapp"></i> රිසිට්පත WhatsApp වෙත එවන්න</button><div id="receiptMessage" style="margin-top: 10px; font-size: 12px; color: #666;"></div></div>
+                        <button class="btn" onclick="notifyAdmin()" style="margin-top: 10px;"><i class="fas fa-bell"></i> පරිපාලකට දන්වන්න</button>
                     </div>
                     <div id="contentSection" style="display:none;">
                         <div class="date-picker-container"><div class="date-nav-buttons"><button class="nav-btn" onclick="goToPreviousDay()"><i class="fas fa-chevron-left"></i> පෙර දිනය</button><button class="nav-btn today-btn" onclick="goToToday()"><i class="fas fa-calendar-day"></i> අද</button><button class="nav-btn" onclick="goToNextDay()">ඊළඟ දිනය <i class="fas fa-chevron-right"></i></button></div>
-                        <div class="date-display"><div class="selected-date" id="selectedDateDisplay"></div><div class="selected-date-info" id="selectedDateInfo"></div></div>
-                        <select id="contentType" class="filter-select" onchange="loadCurrentContent()"><option value="both">📄 PDF + 🖼️ Images</option><option value="pdf">📄 PDF පමණයි</option><option value="images">🖼️ Images පමණයි</option></select></div>
+                        <div class="date-display"><div class="selected-date" id="selectedDateDisplay"></div><div class="selected-date-info" id="selectedDateInfo"></div></div><select id="contentType" class="filter-select" onchange="loadCurrentContent()"><option value="both">📄 PDF + 🖼️ Images</option><option value="pdf">📄 PDF පමණයි</option><option value="images">🖼️ Images පමණයි</option></select></div>
                         <div class="section"><div class="section-title"><i class="fas fa-file-pdf"></i> PDF ගොනු</div><div id="pdfList"></div></div>
                         <div class="section"><div class="section-title"><i class="fas fa-images"></i> පින්තූර</div><div id="imageList"></div></div>
                     </div>
@@ -156,33 +157,37 @@
         </div>
         <footer><i class="fas fa-lock"></i> මාසික දායකත්වය අවශ්‍යයි | රු. 500/මාසය</footer>
     </div>
+    <!-- PDF Modal -->
     <div id="pdfModal" class="modal"><div class="modal-content"><div class="modal-header"><span id="modalTitle">PDF Viewer</span><button class="modal-close" onclick="closePDFModal()">&times;</button></div><div class="modal-body"><iframe id="pdfFrame" src=""></iframe></div></div></div>
 
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-
     <script>
-        const firebaseConfig = { apiKey: "AIzaSyDIvLPukOF4T1p0DOkXjXQ-y-9mWME5QXw", authDomain: "krishanlotterysystem.firebaseapp.com", databaseURL: "https://krishanlotterysystem-default-rtdb.asia-southeast1.firebasedatabase.app", projectId: "krishanlotterysystem", storageBucket: "krishanlotterysystem.firebasestorage.app", messagingSenderId: "114874050177", appId: "1:114874050177:web:eebf9da014c8155a17cf80" };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDIvLPukOF4T1p0DOkXjXQ-y-9mWME5QXw",
+            authDomain: "krishanlotterysystem.firebaseapp.com",
+            databaseURL: "https://krishanlotterysystem-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "krishanlotterysystem",
+            storageBucket: "krishanlotterysystem.firebasestorage.app",
+            messagingSenderId: "114874050177",
+            appId: "1:114874050177:web:eebf9da014c8155a17cf80"
+        };
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth(), db = firebase.firestore(), storage = firebase.storage();
 
         let currentUserData = null, currentSelectedDate = new Date();
         const MAX_DEVICES = 2;
 
-        // Helper Functions
         async function getUserIP() { try { const res = await fetch('https://api.ipify.org?format=json'); const data = await res.json(); return data.ip; } catch(e) { return 'unknown'; } }
         function getDeviceInfo() { const ua = navigator.userAgent; if (ua.includes('iPhone')) return 'iPhone'; if (ua.includes('Android')) return 'Android Phone'; if (ua.includes('Windows')) return 'Windows PC'; if (ua.includes('Mac')) return 'Mac Computer'; return 'Unknown Device'; }
-        function getDeviceFingerprint() { const ua = navigator.userAgent, screen = `${screen.width}x${screen.height}x${screen.colorDepth}`, timezone = Intl.DateTimeFormat().resolvedOptions().timeZone, language = navigator.language; const fingerprint = `${ua}|${screen}|${timezone}|${language}`; return btoa(unescape(encodeURIComponent(fingerprint))).substring(0, 50); }
+        function getDeviceFingerprint() { const ua = navigator.userAgent, screen = `${screen.width}x${screen.height}x${screen.colorDepth}`, timezone = Intl.DateTimeFormat().resolvedOptions().timeZone, language = navigator.language; return btoa(unescape(encodeURIComponent(`${ua}|${screen}|${timezone}|${language}`))).substring(0, 50); }
         function copyToClipboard(text) { navigator.clipboard.writeText(text); alert('✅ පිටපත් කරන ලදී!'); }
-        function shareWhatsApp() { window.open(`https://wa.me/?text=📱 Krishan Lottery System - ${window.location.href}`, '_blank'); }
-        function shareTelegram() { window.open(`https://t.me/share/url?url=${window.location.href}`, '_blank'); }
-        function shareFacebook() { window.open(`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`, '_blank'); }
-        function copyLink() { navigator.clipboard.writeText(window.location.href); alert('✅ Link copied!'); }
         window.switchTab = function(tab) { document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active')); if(tab === 'login') { document.querySelector('.tab:first-child').classList.add('active'); document.getElementById('loginForm').classList.add('active'); } else { document.querySelector('.tab:last-child').classList.add('active'); document.getElementById('registerForm').classList.add('active'); } };
+        function generateRegistrationNo() { return 'KLSC' + Math.floor(Math.random() * 10000).toString().padStart(4, '0'); }
 
-        // Registration
+        // ==================== REGISTRATION ====================
         window.register = async function() {
             const phone = document.getElementById('regPhone').value.replace(/\D/g, ''), fullName = document.getElementById('regFullName').value.trim(), password = document.getElementById('regPassword').value, confirm = document.getElementById('regConfirmPassword').value, msgDiv = document.getElementById('registerMessage');
             if(!phone || phone.length !== 10) { msgDiv.innerHTML = '<div class="message message-error">❌ වලංගු දුරකථන අංකයක් ඇතුලත් කරන්න</div>'; return; }
@@ -195,14 +200,18 @@
             msgDiv.innerHTML = '<div class="message message-info">⏳ ගිණුම සාදමින්...</div>';
             try {
                 const userCred = await auth.createUserWithEmailAndPassword(email, password);
-                const userData = { uid: userCred.user.uid, phone, fullName, status: 'pending', userType: 'customer', registeredAt: new Date(), subscriptionExpiry: null, sessions: [], activeDevices: [] };
+                const userData = {
+                    uid: userCred.user.uid, phone, fullName, status: 'pending', userType: 'customer',
+                    registeredAt: firebase.firestore.Timestamp.fromDate(new Date()),
+                    expiryDate: null, sessions: [], activeDevices: []
+                };
                 await db.collection('users').doc(userCred.user.uid).set(userData);
-                msgDiv.innerHTML = '<div class="message message-success">✅ ලියාපදිංචිය සාර්ථකයි! කරුණාකර රු.500 ගෙවන්න.</div>';
+                msgDiv.innerHTML = '<div class="message message-success">✅ ලියාපදිංචිය සාර්ථකයි! කරුණාකර රු.500 ගෙවා ඔබගේ ගිණුම සක්‍රීය කර ගන්න.</div>';
                 setTimeout(() => switchTab('login'), 2000);
             } catch(e) { msgDiv.innerHTML = `<div class="message message-error">❌ ${e.message}</div>`; }
         };
 
-        // Device Limit Check
+        // ==================== DEVICE LIMIT CHECK ====================
         async function checkAndRegisterDevice(userId, currentDeviceId, deviceName, userIP) {
             const userDoc = await db.collection('users').doc(userId).get();
             let activeDevices = userDoc.data().activeDevices || [];
@@ -211,88 +220,148 @@
             const existingIndex = activeDevices.findIndex(d => d.deviceId === currentDeviceId);
             if (existingIndex !== -1) {
                 activeDevices[existingIndex].lastActive = new Date();
-                activeDevices[existingIndex].deviceName = deviceName;
                 activeDevices[existingIndex].lastIP = userIP;
                 await db.collection('users').doc(userId).update({ activeDevices });
                 return { allowed: true, deviceCount: activeDevices.length, devices: activeDevices };
             } else {
-                if (activeDevices.length >= MAX_DEVICES) {
-                    return { allowed: false, reason: `ඔබ දැනටමත් උපාංග ${activeDevices.length}ක් භාවිතා කරයි. උපරිම උපාංග ${MAX_DEVICES}ක් පමණයි. කරුණාකර පරිපාලක අමතන්න.`, deviceCount: activeDevices.length, devices: activeDevices };
-                }
+                if (activeDevices.length >= MAX_DEVICES) return { allowed: false, reason: `ඔබ දැනටමත් උපාංග ${activeDevices.length}ක් භාවිතා කරයි. උපරිම උපාංග ${MAX_DEVICES}ක් පමණයි.`, deviceCount: activeDevices.length, devices: activeDevices };
                 activeDevices.push({ deviceId: currentDeviceId, deviceName, firstSeen: new Date(), lastActive: new Date(), lastIP: userIP });
                 await db.collection('users').doc(userId).update({ activeDevices });
                 return { allowed: true, deviceCount: activeDevices.length, devices: activeDevices };
             }
         }
 
-        // Login
+        // ==================== SMART LOGIN FUNCTION ====================
         window.login = async function() {
-            let phone = document.getElementById('loginPhone').value.replace(/\D/g, ''); const password = document.getElementById('loginPassword').value, msgDiv = document.getElementById('loginMessage');
+            let phone = document.getElementById('loginPhone').value.replace(/\D/g, '');
+            const enteredPassword = document.getElementById('loginPassword').value;
+            const msgDiv = document.getElementById('loginMessage');
             if(!phone || phone.length !== 10) { msgDiv.innerHTML = '<div class="message message-error">❌ වලංගු දුරකථන අංකයක් ඇතුලත් කරන්න</div>'; return; }
-            if(!password) { msgDiv.innerHTML = '<div class="message message-error">❌ මුරපදය ඇතුලත් කරන්න</div>'; return; }
-            const email = phone + '@lottery.com'; msgDiv.innerHTML = '<div class="message message-info">⏳ පිවිසෙමින්...</div>';
+            const email = phone + '@lottery.com';
+            const androidAutoPassword = 'lottery@' + phone; // This matches the Android App's auto-generated password
+
+            msgDiv.innerHTML = '<div class="message message-info">⏳ පිවිසෙමින්...</div>';
             try {
-                const result = await auth.signInWithEmailAndPassword(email, password);
-                const userQuery = await db.collection('users').where('phone', '==', phone).get();
-                if(userQuery.empty) throw new Error('User not found');
-                const userData = userQuery.docs[0].data();
-                currentUserData = { ...userData, docId: userQuery.docs[0].id };
-                const deviceId = getDeviceFingerprint(), deviceName = getDeviceInfo(), userIP = await getUserIP();
-                const deviceCheck = await checkAndRegisterDevice(currentUserData.docId, deviceId, deviceName, userIP);
-                if (!deviceCheck.allowed) {
-                    msgDiv.innerHTML = `<div class="message message-error"><i class="fas fa-ban"></i> ${deviceCheck.reason}<br><br><strong>Active Devices (${deviceCheck.deviceCount}/${MAX_DEVICES}):</strong><br>${deviceCheck.devices.map(d => `📱 ${d.deviceName} - Last active: ${new Date(d.lastActive.toDate()).toLocaleDateString()}`).join('<br>')}</div>`;
-                    await auth.signOut(); return;
+                let userCredential;
+                // 1. If user entered a password, try with that first
+                if (enteredPassword) {
+                    try {
+                        userCredential = await auth.signInWithEmailAndPassword(email, enteredPassword);
+                    } catch (passwordError) {
+                        // If password fails, try the Android auto-password (smart login)
+                        userCredential = await auth.signInWithEmailAndPassword(email, androidAutoPassword);
+                    }
+                } else {
+                    // 2. No password entered -> Direct smart login attempt with Android auto-password
+                    userCredential = await auth.signInWithEmailAndPassword(email, androidAutoPassword);
                 }
-                const sessionData = { ip: userIP, device: deviceName, loggedInAt: new Date() };
-                const sessions = userData.sessions || []; sessions.push(sessionData);
-                await db.collection('users').doc(currentUserData.docId).update({ sessions, lastLoginIP: userIP, lastLoginTime: new Date() });
-                if(userData.status === 'active' && userData.subscriptionExpiry && new Date() > userData.subscriptionExpiry.toDate()) { await db.collection('users').doc(currentUserData.docId).update({ status: 'expired' }); userData.status = 'expired'; }
+
+                const user = userCredential.user;
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) throw new Error('User data not found');
+
+                let userData = userDoc.data();
+                const userId = userDoc.id;
+                const deviceId = getDeviceFingerprint(), deviceName = getDeviceInfo(), userIP = await getUserIP();
+                const deviceCheck = await checkAndRegisterDevice(userId, deviceId, deviceName, userIP);
+                if (!deviceCheck.allowed) { msgDiv.innerHTML = `<div class="message message-error"><i class="fas fa-ban"></i> ${deviceCheck.reason}</div>`; await auth.signOut(); return; }
+                
+                const sessions = userData.sessions || [];
+                sessions.push({ ip: userIP, device: deviceName, loggedInAt: new Date() });
+                await db.collection('users').doc(userId).update({ sessions, lastLoginIP: userIP, lastLoginTime: new Date(), activeDevices: deviceCheck.devices });
+
+                // Auto-check expiry based on 'expiryDate' field (Standardized with App)
+                let statusChanged = false;
+                if (userData.status === 'approved' && userData.expiryDate) {
+                    if (userData.expiryDate.toDate() < new Date()) {
+                        userData.status = 'expired';
+                        statusChanged = true;
+                    }
+                }
+                if (statusChanged) await db.collection('users').doc(userId).update({ status: 'expired' });
+
+                currentUserData = { ...userData, docId: userId };
                 msgDiv.innerHTML = `<div class="message message-success">✅ ආයුබෝවන් ${userData.fullName}!</div>`;
-                setTimeout(() => showDashboard(userData, phone, sessions, deviceCheck.devices), 500);
-            } catch(e) { msgDiv.innerHTML = '<div class="message message-error">❌ වලංගු නොවන දුරකථන අංකයක් හෝ මුරපදයක්</div>'; }
+                setTimeout(() => showDashboard(currentUserData, phone, sessions, deviceCheck.devices), 500);
+            } catch(error) {
+                console.error("Smart Login Error:", error);
+                if (error.code === 'auth/user-not-found') msgDiv.innerHTML = '<div class="message message-error">❌ ගිණුමක් හමු නොවීය. කරුණාකර ලියාපදිංචි වන්න.</div>';
+                else if (error.code === 'auth/wrong-password') msgDiv.innerHTML = '<div class="message message-error">❌ වැරදි මුරපදයක්. ඔබ Android App එකෙන් ලියාපදිංචි වූවෙක් නම් මුරපදය හිස් තබන්න.</div>';
+                else msgDiv.innerHTML = '<div class="message message-error">❌ පිවිසීම අසාර්ථකයි. නැවත උත්සාහ කරන්න.</div>';
+            }
         };
 
+        // ==================== SHOW DASHBOARD ====================
         async function showDashboard(userData, phone, sessions, activeDevices) {
-            document.getElementById('authSection').style.display = 'none'; document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('dashboardView').style.display = 'block';
             document.getElementById('welcomeUser').innerHTML = `<i class="fas fa-user-circle"></i> ආයුබෝවන්, ${userData.fullName}`;
             document.getElementById('userPhoneText').innerHTML = `<i class="fas fa-phone"></i> ${phone}`;
             const lastSession = sessions?.slice(-1)[0];
             if(lastSession) document.getElementById('sessionInfo').innerHTML = `<i class="fas fa-desktop"></i> අවසන් පිවිසීම: ${new Date(lastSession.loggedInAt).toLocaleString()} සිට <i class="fas fa-map-marker-alt"></i> ${lastSession.ip}`;
             const deviceCount = activeDevices?.length || 0;
-            document.getElementById('deviceInfo').innerHTML = `<i class="fas fa-mobile-alt"></i> Active Devices: ${deviceCount}/${MAX_DEVICES} ${deviceCount >= MAX_DEVICES ? '<span style="color:#ef4444;">⚠️ Limit reached</span>' : '<span style="color:#10b981;">✓ You can add ' + (MAX_DEVICES - deviceCount) + ' more</span>'} <button onclick="viewMyDevices()" style="background:none;border:none;color:#667eea;cursor:pointer;"><i class="fas fa-eye"></i> View</button>`;
-            if(userData.status === 'active' && userData.subscriptionExpiry) {
-                const daysLeft = Math.ceil((userData.subscriptionExpiry.toDate() - new Date()) / (1000*60*60*24));
-                document.getElementById('subscriptionInfo').innerHTML = `<div class="price">✅ සක්‍රීයයි</div><div class="expiry">දින ${daysLeft} ඉතිරියි</div>`;
-                document.getElementById('contentSection').style.display = 'block'; document.getElementById('paymentSection').style.display = 'none';
-                const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); currentSelectedDate = yesterday; updateDateDisplay(); await loadCurrentContent();
-            } else if(userData.status === 'expired') {
-                document.getElementById('subscriptionInfo').innerHTML = `<div class="price">⚠️ දායකත්වය කල් ඉකුත් වී ඇත</div><div class="expiry">රු.500 ගෙවා අලුත් කරන්න</div>`;
-                document.getElementById('contentSection').style.display = 'none'; document.getElementById('paymentSection').style.display = 'block'; document.getElementById('paymentDate').valueAsDate = new Date();
+            document.getElementById('deviceInfo').innerHTML = `<i class="fas fa-mobile-alt"></i> Active Devices: ${deviceCount}/${MAX_DEVICES}`;
+            
+            const subDiv = document.getElementById('subscriptionInfo');
+            const contentDiv = document.getElementById('contentSection');
+            const paymentDiv = document.getElementById('paymentSection');
+
+            if (userData.status === 'approved' && userData.expiryDate) {
+                const expiryDate = userData.expiryDate.toDate();
+                const daysLeft = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                if (daysLeft > 0) {
+                    subDiv.innerHTML = `<div class="price">✅ සක්‍රීයයි</div><div class="expiry">වලංගු කාලය: දින ${daysLeft} ඉතිරියි (${expiryDate.toLocaleDateString()})</div>`;
+                    contentDiv.style.display = 'block';
+                    paymentDiv.style.display = 'none';
+                    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1); currentSelectedDate = yesterday;
+                    updateDateDisplay(); await loadCurrentContent();
+                } else {
+                    subDiv.innerHTML = `<div class="price" style="background: rgba(0,0,0,0.3);">⚠️ දායකත්වය කල් ඉකුත් වී ඇත</div><div class="expiry">නැවත මාසයක් සඳහා රු.500 ගෙවන්න</div>`;
+                    contentDiv.style.display = 'none'; paymentDiv.style.display = 'block'; document.getElementById('paymentDate').valueAsDate = new Date();
+                }
             } else {
-                document.getElementById('subscriptionInfo').innerHTML = `<div class="price">⏳ අනුමැතිය සඳහා රැඳී සිටී</div><div class="expiry">රු.500 ගෙවන්න</div>`;
-                document.getElementById('contentSection').style.display = 'none'; document.getElementById('paymentSection').style.display = 'block'; document.getElementById('paymentDate').valueAsDate = new Date();
+                subDiv.innerHTML = `<div class="price">⏳ අනුමැතිය සඳහා රැඳී සිටී</div><div class="expiry">රු.500 ගෙවා ඔබගේ ගිණුම සක්‍රීය කර ගන්න</div>`;
+                contentDiv.style.display = 'none'; paymentDiv.style.display = 'block'; document.getElementById('paymentDate').valueAsDate = new Date();
             }
             const badge = document.getElementById('userStatusBadge');
-            if(userData.status === 'active') badge.innerHTML = '<span class="status-badge status-active">✅ Active</span>';
+            if(userData.status === 'approved') badge.innerHTML = '<span class="status-badge status-active">✅ Active</span>';
             else if(userData.status === 'expired') badge.innerHTML = '<span class="status-badge status-expired">⚠️ Expired</span>';
-            else badge.innerHTML = '<span class="status-badge status-pending">⏳ Pending</span>';
+            else if(userData.status === 'pending') badge.innerHTML = '<span class="status-badge status-pending">⏳ Pending</span>';
         }
 
-        window.viewMyDevices = async function() {
-            const userDoc = await db.collection('users').doc(currentUserData.docId).get(); const devices = userDoc.data().activeDevices || [];
-            if(devices.length === 0) { alert('No active devices found'); return; }
-            let deviceList = `📱 Your Active Devices (${devices.length}/${MAX_DEVICES}):\n\n`;
-            devices.forEach((device, index) => { deviceList += `${index+1}. ${device.deviceName}\n   Last active: ${new Date(device.lastActive?.toDate()).toLocaleString()}\n   IP: ${device.lastIP || '-'}\n\n`; });
-            if(devices.length >= MAX_DEVICES) deviceList += `\n⚠️ Device limit reached. To use a new device, please contact admin.`;
-            alert(deviceList);
+        // ==================== WHATSAPP RECEIPT UPLOAD ====================
+        window.sendReceiptToAdmin = function() {
+            if (!currentUserData) { alert('Please login first'); return; }
+            const amount = document.getElementById('paymentAmount')?.value || '500';
+            const paymentDate = document.getElementById('paymentDate')?.value || new Date().toISOString().slice(0,10);
+            const notes = document.getElementById('paymentNote')?.value || '';
+            const userName = currentUserData.fullName;
+            const userPhone = currentUserData.phone;
+            const formattedDate = new Date(paymentDate).toLocaleDateString('si-LK');
+            const message = `📢 *නව ගෙවීම් දැනුම්දීමක්* 📢%0A%0A👤 *ගෙවූ අය:* ${userName}%0A📞 *දුරකථන අංකය:* ${userPhone}%0A💰 *ගෙවූ මුදල:* රු. ${amount}%0A📅 *ගෙවූ දිනය:* ${formattedDate}%0A📝 *සටහන:* ${notes || '-'}%0A%0A🔗 *ගිණුම සක්‍රීය කිරීමට:* පහත බොත්තම ඔබා රිසිට්පත අමුණන්න.%0A%0A_මෙම පණිවිඩය ස්වයංක්‍රීයව ජනනය කරන ලදී._`;
+            const whatsappUrl = `https://wa.me/9477325563?text=${message}`;
+            const receiptMsg = document.getElementById('receiptMessage');
+            receiptMsg.innerHTML = `<i class="fas fa-spinner fa-spin"></i> WhatsApp විවෘත වෙමින්...`;
+            window.open(whatsappUrl, '_blank');
+            setTimeout(() => { receiptMsg.innerHTML = `<i class="fas fa-check-circle"></i> රිසිට්පත WhatsApp වෙත එවන ලෙස ඉල්ලා සිටිමු!`; setTimeout(() => receiptMsg.innerHTML = '', 5000); }, 2000);
         };
 
+        window.notifyAdmin = async function() {
+            const amount = document.getElementById('paymentAmount').value, paymentDate = document.getElementById('paymentDate').value, note = document.getElementById('paymentNote').value;
+            if(!amount || amount < 500) { alert('අවම රු.500'); return; }
+            if(!paymentDate) { alert('ගෙවූ දිනය තෝරන්න'); return; }
+            await db.collection('paymentRequests').add({ userId: currentUserData.docId, userPhone: currentUserData.phone, userName: currentUserData.fullName, amount: parseInt(amount), paymentDate: new Date(paymentDate), note, status: 'pending', requestedAt: new Date() });
+            alert('✅ දැනුම්දීම යවන ලදී'); document.getElementById('paymentNote').value = '';
+        };
+
+        // ==================== CONTENT & DATE FUNCTIONS ====================
         function formatDate(date) { const y = date.getFullYear(), m = String(date.getMonth()+1).padStart(2,'0'), d = String(date.getDate()).padStart(2,'0'); return `${y}-${m}-${d}`; }
-        function updateDateDisplay() { document.getElementById('selectedDateDisplay').innerHTML = currentSelectedDate.toLocaleDateString('si-LK', { year:'numeric', month:'long', day:'numeric' }); const isToday = formatDate(currentSelectedDate) === formatDate(new Date()); document.getElementById('selectedDateInfo').innerHTML = isToday ? '<i class="fas fa-calendar-day"></i> අද දින ප්‍රතිඵල' : '<i class="fas fa-calendar-alt"></i> පරණ ප්‍රතිඵල'; }
+        function updateDateDisplay() { document.getElementById('selectedDateDisplay').innerHTML = currentSelectedDate.toLocaleDateString('si-LK', { year:'numeric', month:'long', day:'numeric' }); document.getElementById('selectedDateInfo').innerHTML = formatDate(currentSelectedDate) === formatDate(new Date()) ? 'අද දින ප්‍රතිඵල' : 'පරණ ප්‍රතිඵල'; }
         window.goToPreviousDay = function() { currentSelectedDate.setDate(currentSelectedDate.getDate() - 1); updateDateDisplay(); loadCurrentContent(); };
         window.goToNextDay = function() { const next = new Date(currentSelectedDate); next.setDate(next.getDate() + 1); if(next <= new Date()) { currentSelectedDate = next; updateDateDisplay(); loadCurrentContent(); } else alert('අනාගත දිනයක් තෝරා ගත නොහැක'); };
         window.goToToday = function() { currentSelectedDate = new Date(); updateDateDisplay(); loadCurrentContent(); };
         window.loadCurrentContent = async function() { await loadContentByDate(formatDate(currentSelectedDate), document.getElementById('contentType').value); };
+        
         async function loadContentByDate(folder, contentType) {
             const pdfDiv = document.getElementById('pdfList'), imgDiv = document.getElementById('imageList');
             const sections = document.querySelectorAll('.section');
@@ -308,11 +377,12 @@
                 if(contentType !== 'pdf') { if(images.length) { imgDiv.innerHTML = '<div class="image-grid"></div>'; images.forEach(i => { imgDiv.querySelector('.image-grid').innerHTML += `<div class="image-card"><div class="image-preview"><img src="${i.url}" alt="${i.name}"></div><div class="image-info"><div class="image-name">${i.name}</div><div class="image-actions"><a href="${i.url}" target="_blank" class="small-btn view"><i class="fas fa-eye"></i> බලන්න</a><a href="${i.url}" download class="small-btn download"><i class="fas fa-download"></i> බාගන්න</a></div></div></div>`; }); } else imgDiv.innerHTML = '<div class="empty-state"><div class="emoji">🖼️</div><p>පින්තූර නොමැත</p></div>'; }
             } catch(e) { if(contentType !== 'images') pdfDiv.innerHTML = '<div class="empty-state"><div class="emoji">📅</div><p>අන්තර්ගතයක් නොමැත</p></div>'; if(contentType !== 'pdf') imgDiv.innerHTML = '<div class="empty-state"><div class="emoji">📅</div><p>අන්තර්ගතයක් නොමැත</p></div>'; }
         }
-        window.notifyAdmin = async function() { const amount = document.getElementById('paymentAmount').value, paymentDate = document.getElementById('paymentDate').value, note = document.getElementById('paymentNote').value; if(!amount || amount < 500) { alert('අවම රු.500'); return; } if(!paymentDate) { alert('ගෙවූ දිනය තෝරන්න'); return; } await db.collection('paymentRequests').add({ userId: currentUserData.docId, userPhone: currentUserData.phone, userName: currentUserData.fullName, amount: parseInt(amount), paymentDate: new Date(paymentDate), note, status: 'pending', requestedAt: new Date() }); alert('✅ දැනුම්දීම යවන ලදී'); document.getElementById('paymentNote').value = ''; };
+
         window.viewPDF = function(url, name) { document.getElementById('modalTitle').innerHTML = `<i class="fas fa-file-pdf"></i> ${name}`; document.getElementById('pdfFrame').src = url; document.getElementById('pdfModal').style.display = 'block'; };
         window.closePDFModal = function() { document.getElementById('pdfModal').style.display = 'none'; document.getElementById('pdfFrame').src = ''; };
         window.logout = async function() { await auth.signOut(); location.reload(); };
-        auth.onAuthStateChanged(async (user) => { if(user) { const phone = user.email.replace('@lottery.com', ''); const userQuery = await db.collection('users').where('phone', '==', phone).get(); if(!userQuery.empty) { const u = userQuery.docs[0].data(); currentUserData = { ...u, docId: userQuery.docs[0].id }; if(u.status === 'active' && u.subscriptionExpiry && new Date() > u.subscriptionExpiry.toDate()) { await db.collection('users').doc(currentUserData.docId).update({ status: 'expired' }); u.status = 'expired'; } showDashboard(u, phone, u.sessions || [], u.activeDevices || []); } } });
+        
+        auth.onAuthStateChanged(async (user) => { if(user) { const email = user.email; if(email && email.includes('@lottery.com')) { const phone = email.replace('@lottery.com', ''); const userQuery = await db.collection('users').where('phone', '==', phone).get(); if(!userQuery.empty) { const u = userQuery.docs[0].data(); currentUserData = { ...u, docId: userQuery.docs[0].id }; if(u.status === 'approved' && u.expiryDate && new Date() > u.expiryDate.toDate()) { await db.collection('users').doc(currentUserData.docId).update({ status: 'expired' }); u.status = 'expired'; } showDashboard(u, phone, u.sessions || [], u.activeDevices || []); } } } });
     </script>
 </body>
 </html>
