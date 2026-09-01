@@ -8,134 +8,126 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         :root {
-            --primary: #667eea;
-            --primary-dark: #5a67d8;
-            --secondary: #764ba2;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --dark: #1f2937;
-            --light: #f9fafb;
-            --gray: #6b7280;
+            --primary:#4f7cff; --primary-dark:#315ee8; --secondary:#8b5cf6;
+            --success:#16c784; --warning:#f5a524; --danger:#ef5261; --info:#22b8ff;
+            --bg:#070b14; --card-bg:rgba(17,25,41,.82); --border:rgba(255,255,255,.09);
+            --text:#f4f7fb; --text-secondary:#91a0b5; --sidebar:#0b1120;
         }
-
-        [data-theme="dark"] {
-            --primary: #818cf8;
-            --primary-dark: #6366f1;
-            --secondary: #a78bfa;
-            --success: #34d399;
-            --warning: #fbbf24;
-            --danger: #f87171;
-            --dark: #f3f4f6;
-            --light: #1f2937;
-            --gray: #9ca3af;
-            --bg: #111827;
-            --card-bg: #1f2937;
-            --border: #374151;
-            --text: #f3f4f6;
-            --text-secondary: #9ca3af;
+        [data-theme="dark"]{
+            --primary:#7c9cff;--primary-dark:#5d7ff0;--secondary:#a78bfa;
+            --success:#34d399;--warning:#fbbf24;--danger:#fb7185;--info:#38bdf8;
+            --bg:#070b14;--card-bg:rgba(17,25,41,.82);--border:rgba(255,255,255,.09);
+            --text:#f4f7fb;--text-secondary:#94a3b8;--sidebar:#090f1c;
         }
-
-        [data-theme="light"] {
-            --bg: #f3f4f6;
-            --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --text: #1f2937;
-            --text-secondary: #6b7280;
+        [data-theme="light"]{
+            --bg:#eef3f9;--card-bg:#fff;--border:#dfe6ef;--text:#172033;
+            --text-secondary:#66758b;--sidebar:#172554;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--text); transition: all 0.3s ease; }
-        .app-container { display: flex; min-height: 100vh; }
-        
-        /* Sidebar */
-        .sidebar { width: 280px; background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 100%); color: white; transition: all 0.3s; position: fixed; height: 100vh; overflow-y: auto; z-index: 100; }
-        .sidebar-header { padding: 24px 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .sidebar-header h2 { font-size: 20px; margin-bottom: 4px; }
-        .sidebar-header p { font-size: 12px; opacity: 0.8; }
-        .sidebar-menu { padding: 20px 0; }
-        .menu-item { padding: 12px 24px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.3s; color: rgba(255,255,255,0.9); }
-        .menu-item:hover, .menu-item.active { background: rgba(255,255,255,0.15); border-left: 3px solid white; }
-        .menu-item i { width: 24px; }
-
-        /* Main Content */
-        .main-content { flex: 1; margin-left: 280px; padding: 20px; }
-        .top-bar { background: var(--card-bg); border-radius: 16px; padding: 16px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; border: 1px solid var(--border); }
-        .top-bar h1 { font-size: 24px; color: var(--text); }
-        .top-bar-actions { display: flex; gap: 12px; align-items: center; }
-        .theme-toggle, .logout-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text); padding: 8px; border-radius: 10px; transition: all 0.3s; }
-
-        /* Card Menu */
-        .card-menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .menu-card { border-radius: 24px; padding: 24px 20px; text-align: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        .menu-card i { font-size: 42px; margin-bottom: 12px; display: inline-block; }
-        .menu-card h3 { font-size: 18px; margin-bottom: 4px; font-weight: 600; color: white; }
-        .menu-card p { font-size: 12px; opacity: 0.9; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
-        .card-badge { background: rgba(0,0,0,0.3); border-radius: 30px; padding: 4px 12px; font-size: 13px; font-weight: 600; display: inline-block; color: white; }
-
-        /* Bulk Update Card */
-        .bulk-update-card { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 20px; padding: 20px; margin-bottom: 24px; color: white; }
-        .bulk-update-card input { padding: 10px 16px; border: none; border-radius: 8px; font-size: 14px; }
-        .bulk-update-card .btn-white { background: white; color: #d97706; border: none; padding: 10px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-        .charts-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-bottom: 24px; }
-        .chart-card { background: var(--card-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border); }
-        .chart-card h3 { margin-bottom: 16px; font-size: 18px; color: var(--text); }
-        canvas { max-height: 250px; width: 100%; }
-
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-        .tab { padding: 10px 20px; background: none; border: none; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 30px; transition: all 0.3s; color: var(--text-secondary); }
-        .tab.active { background: var(--primary); color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-
-        .search-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
-        .search-bar input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 30px; background: var(--card-bg); color: var(--text); min-width: 150px; }
-        .search-bar button { padding: 12px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: 600; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-sm { padding: 6px 12px; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; margin: 2px; }
-        .btn-sm i { margin-right: 4px; }
-
-        .table-container { overflow-x: auto; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background: var(--primary); color: white; font-weight: 600; }
-        .status-badge { padding: 4px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .status-approved { background: #dcfce7; color: #16a34a; }
-        .status-pending { background: #fed7aa; color: #9a3412; }
-        .status-expired { background: #fee2e2; color: #dc2626; }
-        .status-blocked { background: #fecaca; color: #991b1b; }
-
-        .bulk-bar { background: var(--border); border-radius: 16px; padding: 12px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
-        .bulk-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .row-select { width: 40px; text-align: center; }
-
-        .payment-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .payment-card .info { flex: 1; }
-        .payment-card .info strong { display: block; margin-bottom: 4px; }
-
-        .pagination { display: flex; justify-content: center; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
-        .page-btn { padding: 8px 14px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); border-radius: 8px; cursor: pointer; }
-        .page-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        .login-box { max-width: 400px; margin: 100px auto; background: var(--card-bg); padding: 32px; border-radius: 24px; border: 1px solid var(--border); }
-        .login-box input { width: 100%; padding: 14px; margin: 12px 0; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); color: var(--text); }
-        .login-box .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; }
-
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); position: fixed; }
-            .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; }
-            .menu-toggle { display: block; position: fixed; top: 20px; left: 20px; z-index: 1001; background: var(--primary); color: white; border: none; padding: 12px; border-radius: 12px; cursor: pointer; }
-            .card-menu-grid { grid-template-columns: repeat(2, 1fr); }
-            .charts-row { grid-template-columns: 1fr; }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            background:
+              radial-gradient(circle at 10% 0%,rgba(79,124,255,.16),transparent 30%),
+              radial-gradient(circle at 90% 10%,rgba(139,92,246,.12),transparent 28%),
+              var(--bg);
+            color:var(--text);transition:background .3s,color .3s;min-height:100vh;
         }
-        @media (min-width: 769px) { .menu-toggle { display: none; } }
+        body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:36px 36px}
+        .app-container{display:flex;min-height:100vh;position:relative;z-index:1}
+        .sidebar{
+            width:270px;background:linear-gradient(180deg,#101b35 0%,#0a1020 72%,#080d18 100%);
+            color:#fff;transition:.3s;position:fixed;height:100vh;overflow-y:auto;z-index:100;
+            border-right:1px solid rgba(255,255,255,.08);box-shadow:18px 0 50px rgba(0,0,0,.22)
+        }
+        .sidebar-header{padding:27px 20px 22px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08)}
+        .sidebar-header h2{font-size:20px;margin-bottom:6px;letter-spacing:.3px}
+        .sidebar-header h2 i{color:#ffd166;margin-right:7px}.sidebar-header p{font-size:11px;color:#a9b7cb;letter-spacing:.7px}
+        .sidebar-menu{padding:18px 12px}.menu-item{
+            margin:5px 0;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;
+            transition:.2s;color:rgba(255,255,255,.72);border:1px solid transparent;border-radius:13px;font-size:14px;font-weight:650
+        }
+        .menu-item:hover{background:rgba(255,255,255,.055);color:#fff;border-color:rgba(255,255,255,.06)}
+        .menu-item.active{background:linear-gradient(90deg,rgba(79,124,255,.22),rgba(139,92,246,.08));color:#fff;border-color:rgba(124,156,255,.18);box-shadow:inset 3px 0 #7c9cff}
+        .menu-item i{width:23px;text-align:center;color:#8eb0ff}
+        .main-content{flex:1;margin-left:270px;padding:22px;min-width:0}
+        .top-bar{
+            background:linear-gradient(145deg,rgba(22,31,50,.9),rgba(12,18,31,.86));
+            border:1px solid var(--border);border-radius:20px;padding:16px 20px;margin-bottom:22px;
+            display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+            box-shadow:0 18px 45px rgba(0,0,0,.18);backdrop-filter:blur(18px)
+        }
+        .top-bar h1{font-size:23px;color:var(--text);font-weight:800}.top-bar-actions{display:flex;gap:8px;align-items:center}
+        .theme-toggle,.logout-btn{background:rgba(255,255,255,.045);border:1px solid var(--border);font-size:16px;cursor:pointer;color:var(--text);padding:9px 11px;border-radius:11px;transition:.2s}
+        .theme-toggle:hover,.logout-btn:hover{background:rgba(79,124,255,.12);transform:translateY(-1px)}
+        .logout-btn{color:#ff9aa7}
+        .card-menu-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:22px}
+        .menu-card{
+            position:relative;border-radius:20px;padding:21px 18px;text-align:left;cursor:pointer;transition:.22s;
+            box-shadow:0 15px 35px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.12);overflow:hidden
+        }
+        .menu-card:after{content:"";position:absolute;width:100px;height:100px;right:-35px;top:-35px;background:rgba(255,255,255,.10);border-radius:50%}
+        .menu-card:hover{transform:translateY(-4px);box-shadow:0 20px 45px rgba(0,0,0,.28)}
+        .menu-card i{font-size:30px;margin-bottom:15px;display:block}.menu-card h3{font-size:16px;margin-bottom:5px;font-weight:750;color:#fff}.menu-card p{font-size:11px;opacity:.78;color:#fff;margin-bottom:12px}.card-badge{background:rgba(0,0,0,.26);border:1px solid rgba(255,255,255,.13);border-radius:30px;padding:5px 11px;font-size:12px;font-weight:800;display:inline-block;color:#fff}
+        .bulk-update-card{background:linear-gradient(135deg,#f59e0b,#b45309);border-radius:19px;padding:19px;margin-bottom:22px;color:#fff;box-shadow:0 15px 35px rgba(180,83,9,.17)}
+        .bulk-update-card input{padding:10px 13px;border:none;border-radius:10px;font-size:13px}.bulk-update-card .btn-white{background:#fff;color:#a85b06;border:none;padding:10px 18px;border-radius:10px;font-weight:800;cursor:pointer}
+        .charts-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:22px}.chart-card{background:var(--card-bg);border-radius:19px;padding:19px;border:1px solid var(--border);box-shadow:0 15px 35px rgba(0,0,0,.12);backdrop-filter:blur(12px)}
+        .chart-card h3{margin-bottom:15px;font-size:16px;color:var(--text)}.chart-card h3 i{color:#79a1ff;margin-right:7px}canvas{max-height:250px;width:100%}
+        .tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;border:0;padding:0}
+        .tab{padding:10px 17px;background:rgba(255,255,255,.045);border:1px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;border-radius:12px;transition:.2s;color:var(--text-secondary)}
+        .tab:hover{background:rgba(79,124,255,.10);color:var(--text);transform:translateY(-1px)}.tab.active{background:linear-gradient(135deg,#4f7cff,#315ee8);color:#fff;border-color:rgba(255,255,255,.14);box-shadow:0 9px 22px rgba(49,94,232,.22)}
+        .tab-content{display:none}.tab-content.active{display:block;animation:fadeUp .25s ease}@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+        .search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}.search-bar input{flex:1;padding:12px 15px;border:1px solid var(--border);border-radius:13px;background:var(--card-bg);color:var(--text);min-width:180px;outline:none}.search-bar input:focus{border-color:#6f95ff;box-shadow:0 0 0 3px rgba(79,124,255,.10)}
+        .search-bar button{padding:11px 17px;border:none;border-radius:12px;cursor:pointer;font-weight:750}.btn-primary{background:#4f7cff;color:#fff}.btn-success{background:#16a46f;color:#fff}.btn-danger{background:#dc4256;color:#fff}.btn-warning{background:#d88908;color:#fff}.btn-sm{padding:6px 10px;border:none;border-radius:8px;cursor:pointer;font-size:11px;margin:2px;font-weight:700}.btn-sm i{margin-right:4px}
+        .table-container{overflow-x:auto;background:var(--card-bg);border-radius:17px;border:1px solid var(--border);box-shadow:0 12px 28px rgba(0,0,0,.10)}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:13px 15px;text-align:left;border-bottom:1px solid var(--border);font-size:13px}th{background:linear-gradient(135deg,#315ee8,#4f7cff);color:#fff;font-weight:700;white-space:nowrap}tbody tr{transition:.15s}tbody tr:hover{background:rgba(79,124,255,.055)}
+        .status-badge{padding:4px 10px;border-radius:30px;font-size:11px;font-weight:800;display:inline-block}.status-approved{background:rgba(22,199,132,.15);color:#34d399}.status-pending{background:rgba(245,165,36,.15);color:#fbbf24}.status-expired{background:rgba(239,82,97,.15);color:#fb7185}.status-blocked{background:rgba(239,82,97,.15);color:#fb7185}
+        .bulk-bar{background:rgba(255,255,255,.045);border:1px solid var(--border);border-radius:15px;padding:11px 15px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}.bulk-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.row-select{width:40px;text-align:center}
+        .payment-card{background:var(--card-bg);border:1px solid var(--border);border-radius:17px;padding:15px 17px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:13px;box-shadow:0 10px 25px rgba(0,0,0,.08)}.payment-card:hover{border-color:rgba(79,124,255,.25);transform:translateY(-1px)}.payment-card .info{flex:1}.payment-card .info strong{display:block;margin-bottom:5px;color:var(--text)}
+        .pagination{display:flex;justify-content:center;gap:7px;margin-top:18px;flex-wrap:wrap}.page-btn{padding:7px 12px;border:1px solid var(--border);background:var(--card-bg);color:var(--text);border-radius:9px;cursor:pointer}.page-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+        .login-box{max-width:410px;margin:70px auto;background:var(--card-bg);padding:31px;border-radius:23px;border:1px solid var(--border);box-shadow:0 25px 70px rgba(0,0,0,.25);backdrop-filter:blur(18px)}.login-box h2{color:var(--text)}.login-box input{width:100%;padding:13px 14px;margin:9px 0;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.04);color:var(--text);outline:none}.login-box input:focus{border-color:#6f95ff;box-shadow:0 0 0 3px rgba(79,124,255,.10)}.login-box .btn{width:100%;padding:13px;border:none;border-radius:12px;font-weight:700;cursor:pointer}
+
+        .results-upload-card{background:linear-gradient(145deg,rgba(18,29,51,.92),rgba(10,16,29,.92));border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 18px 45px rgba(0,0,0,.16)}
+        .upload-date-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+        .upload-file-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+        .upload-file-box{border:1px dashed rgba(124,156,255,.35);background:rgba(255,255,255,.035);border-radius:16px;padding:15px}
+        .upload-file-box label{display:block;font-weight:750;color:var(--text);font-size:13px;margin-bottom:8px}
+        .upload-file-box label i{color:#79a1ff;margin-right:7px}
+        .upload-file-box input[type=file]{width:100%;font-size:12px;color:var(--text-secondary)}
+        .upload-file-box small{display:block;color:var(--text-secondary);font-size:10px;margin-top:6px}
+        .upload-progress{display:none;margin-top:18px}
+        .progress-track{height:10px;background:rgba(255,255,255,.07);border-radius:20px;overflow:hidden}
+        .progress-fill{height:100%;width:0;background:linear-gradient(90deg,#4f7cff,#8b5cf6);border-radius:20px;transition:width .2s}
+        .upload-status{margin-top:9px;color:var(--text-secondary);font-size:12px}
+        .upload-actions{display:flex;gap:10px;margin-top:18px}
+        .upload-actions button{flex:1}
+        @media(max-width:640px){.upload-date-row,.upload-file-grid{grid-template-columns:1fr}.upload-actions{flex-direction:column}}
+
+
+        .results-manager{margin-top:20px;background:linear-gradient(145deg,rgba(18,29,51,.92),rgba(10,16,29,.92));border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 18px 45px rgba(0,0,0,.16)}
+        .manager-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:15px 0}
+        .manager-toolbar input{flex:1;min-width:200px;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.045);color:var(--text);outline:none}
+        .manager-toolbar input:focus{border-color:#6f95ff;box-shadow:0 0 0 3px rgba(79,124,255,.10)}
+        .manager-toolbar button{padding:11px 15px;border:1px solid var(--border);border-radius:11px;cursor:pointer;font-weight:750}
+        .manager-result-list{display:grid;gap:12px}
+        .manager-result{border:1px solid var(--border);border-radius:18px;background:rgba(255,255,255,.035);overflow:hidden}
+        .manager-result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;background:rgba(255,255,255,.025);border-bottom:1px solid var(--border);flex-wrap:wrap}
+        .manager-date{font-size:17px;font-weight:850;color:#fff}.manager-meta{font-size:11px;color:var(--text-secondary);margin-top:4px}
+        .manager-files{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;padding:14px}
+        .manager-file{border:1px solid var(--border);border-radius:14px;padding:12px;background:rgba(255,255,255,.025);min-width:0}
+        .manager-file-name{font-size:12px;font-weight:800;color:var(--text);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .manager-file-state{font-size:11px;margin-bottom:10px;color:var(--text-secondary)}
+        .manager-file-state.ok{color:#5ee7ad}.manager-file-state.no{color:#fb7185}
+        .manager-file-actions{display:flex;gap:6px}.manager-file-actions button{flex:1;padding:7px 5px;border:0;border-radius:8px;cursor:pointer;font-size:10px;font-weight:750}
+        .manager-file-actions .preview{background:#315ee8;color:#fff}.manager-file-actions .replace{background:#d88908;color:#fff}.manager-file-actions .delete{background:#c9374c;color:#fff}
+        .manager-empty{text-align:center;padding:35px 15px;color:var(--text-secondary);border:1px dashed var(--border);border-radius:15px}
+        .manager-loading{text-align:center;padding:28px;color:var(--text-secondary)}
+        @media(max-width:1050px){.manager-files{grid-template-columns:repeat(3,minmax(0,1fr))}}
+        @media(max-width:640px){.manager-files{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @media(max-width:430px){.manager-files{grid-template-columns:1fr}}
+
+        @media(max-width:1000px){.card-menu-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+        @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.main-content{margin-left:0;padding:15px}.menu-toggle{display:block;position:fixed;top:15px;left:15px;z-index:1001;background:#4f7cff;color:#fff;border:0;padding:11px 12px;border-radius:11px;cursor:pointer;box-shadow:0 10px 25px rgba(0,0,0,.25)}.card-menu-grid{grid-template-columns:repeat(2,1fr)}.charts-row{grid-template-columns:1fr}.top-bar{padding-left:60px}.top-bar h1{font-size:20px}}
+        @media(min-width:769px){.menu-toggle{display:none}}
+        @media(max-width:520px){.card-menu-grid{grid-template-columns:1fr}.tabs .tab{flex:1;min-width:30%}.top-bar-actions{width:100%}.theme-toggle,.logout-btn{flex:1}.login-box{margin:55px 10px}}
     </style>
 </head>
 <body>
@@ -149,6 +141,7 @@
                 <div class="menu-item" data-tab="payments"><i class="fas fa-credit-card"></i> Payment Requests</div>
                 <div class="menu-item" data-tab="users"><i class="fas fa-users"></i> All Users</div>
                 <div class="menu-item" data-tab="active"><i class="fas fa-check-circle"></i> Active Users</div>
+<div class="menu-item" data-tab="resultsUpload"><i class="fas fa-cloud-upload-alt"></i> Upload Results</div>
             </div>
         </div>
 
@@ -271,6 +264,98 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Results Upload -->
+                <div id="resultsUploadTab" class="tab-content">
+                    <div class="results-upload-card">
+                        <h2 style="margin-bottom:7px;"><i class="fas fa-cloud-upload-alt" style="color:#79a1ff;"></i> Upload Lottery Results</h2>
+                        <p style="color:var(--text-secondary);font-size:12px;margin-bottom:20px;">
+                            PDF / Image files upload කරලා Firebase Storage සහ Firestore එක automatically update කරන්න.
+                        </p>
+
+                        <div class="upload-date-row">
+                            <div class="input-field">
+                                <label><i class="fas fa-calendar-alt"></i> Result Date</label>
+                                <input type="date" id="resultUploadDate">
+                            </div>
+                            <div class="input-field">
+                                <label><i class="fas fa-clock"></i> Expiry</label>
+                                <input type="date" id="resultUploadExpiry">
+                            </div>
+                        </div>
+
+                        <div class="upload-file-grid">
+                            <div class="upload-file-box">
+                                <label><i class="fas fa-image"></i> Result Image</label>
+                                <input type="file" id="resultImageFile" accept="image/*">
+                                <small>Storage: results/{date}/image.jpg</small>
+                            </div>
+
+                            <div class="upload-file-box">
+                                <label><i class="fas fa-file-pdf"></i> A4 PDF</label>
+                                <input type="file" id="resultA4File" accept="application/pdf,.pdf">
+                                <small>Storage: results/{date}/a4.pdf</small>
+                            </div>
+
+                            <div class="upload-file-box">
+                                <label><i class="fas fa-file-pdf"></i> 2 in 1 PDF</label>
+                                <input type="file" id="result2in1File" accept="application/pdf,.pdf">
+                                <small>Storage: results/{date}/2in1.pdf</small>
+                            </div>
+
+                            <div class="upload-file-box">
+                                <label><i class="fas fa-file-pdf"></i> NLB PDF</label>
+                                <input type="file" id="resultNlbFile" accept="application/pdf,.pdf">
+                                <small>Storage: results/{date}/nlb.pdf</small>
+                            </div>
+
+                            <div class="upload-file-box">
+                                <label><i class="fas fa-file-pdf"></i> DLB PDF</label>
+                                <input type="file" id="resultDlbFile" accept="application/pdf,.pdf">
+                                <small>Storage: results/{date}/dlb.pdf</small>
+                            </div>
+                        </div>
+
+                        <div class="upload-actions">
+                            <button class="btn btn-primary" onclick="uploadAllResultsFromWeb()">
+                                <i class="fas fa-cloud-upload-alt"></i> Upload Results
+                            </button>
+                            <button class="btn" style="background:rgba(255,255,255,.07);border:1px solid var(--border);" onclick="clearResultUploadForm()">
+                                <i class="fas fa-undo"></i> Clear
+                            </button>
+                        </div>
+
+                        <div id="resultUploadProgress" class="upload-progress">
+                            <div class="progress-track"><div id="resultUploadProgressFill" class="progress-fill"></div></div>
+                            <div id="resultUploadStatus" class="upload-status">Preparing upload...</div>
+                        </div>
+
+
+                        <div id="resultUploadMsg"></div>
+                    </div>
+
+                    <div class="results-manager">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                            <div>
+                                <h2 style="margin-bottom:6px;"><i class="fas fa-folder-open" style="color:#ffd166;"></i> Results Manager</h2>
+                                <p style="color:var(--text-secondary);font-size:12px;">Firebase හි දැනට ඇති Result Date එකක් තෝරාගෙන files preview, replace හෝ delete කරන්න.</p>
+                            </div>
+                            <button class="btn" style="width:auto;padding:10px 15px;" onclick="loadResultsManager()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+
+                        <div class="manager-toolbar">
+                            <input type="date" id="managerDateFilter" onchange="loadResultsManager()">
+                            <input type="text" id="managerSearch" placeholder="Date search..." oninput="filterResultsManager()">
+                            <button class="btn-primary" onclick="clearManagerFilters()"><i class="fas fa-times"></i> Clear</button>
+                        </div>
+
+                        <div id="resultsManagerList" class="manager-result-list">
+                            <div class="manager-loading"><i class="fas fa-spinner fa-spin"></i> Results load කිරීමට Refresh කරන්න.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -278,6 +363,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
     <script>
         const firebaseConfig = {
@@ -289,6 +375,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+        const storage = firebase.storage();
 
         let allUsers = [], paymentRequests = [];
         let selectedUserIds = new Set();
@@ -642,13 +729,391 @@
             downloadCSV(csv, "payments_export.csv");
         };
 
+
+        // ==================== RESULTS UPLOAD ====================
+        function setDefaultResultUploadDate(){
+            const d = new Date();
+            const local = new Date(d.getTime() - d.getTimezoneOffset()*60000);
+            const today = local.toISOString().slice(0,10);
+            const dateEl = document.getElementById('resultUploadDate');
+            const expiryEl = document.getElementById('resultUploadExpiry');
+            if(dateEl && !dateEl.value) dateEl.value = today;
+            if(expiryEl && !expiryEl.value){
+                const e = new Date(local);
+                e.setMonth(e.getMonth()+7);
+                expiryEl.value = e.toISOString().slice(0,10);
+            }
+        }
+
+        function setUploadStatus(message, percent){
+            const wrap = document.getElementById('resultUploadProgress');
+            const fill = document.getElementById('resultUploadProgressFill');
+            const status = document.getElementById('resultUploadStatus');
+            if(wrap) wrap.style.display = 'block';
+            if(fill) fill.style.width = Math.max(0,Math.min(100,percent)) + '%';
+            if(status) status.textContent = message;
+        }
+
+        function showResultUploadMessage(message, type='info'){
+            const el = document.getElementById('resultUploadMsg');
+            if(!el) return;
+            el.innerHTML = `<div class="message message-${type}" style="margin-top:14px">${message}</div>`;
+        }
+
+        async function uploadOneResultFile(file, storagePath, onProgress){
+            if(!file) return null;
+            const ref = storage.ref(storagePath);
+            const task = ref.put(file, {contentType:file.type || undefined});
+            return await new Promise((resolve,reject)=>{
+                task.on('state_changed',
+                    snap => {
+                        const pct = snap.totalBytes ? (snap.bytesTransferred / snap.totalBytes) * 100 : 0;
+                        if(onProgress) onProgress(pct);
+                    },
+                    reject,
+                    async () => resolve(await task.snapshot.ref.getDownloadURL())
+                );
+            });
+        }
+
+        window.uploadAllResultsFromWeb = async function(){
+            if(!auth.currentUser){
+                showResultUploadMessage('Admin login අවශ්‍යයි.', 'error');
+                return;
+            }
+
+            const dateStr = document.getElementById('resultUploadDate')?.value;
+            const expiryStr = document.getElementById('resultUploadExpiry')?.value;
+
+            if(!dateStr){
+                showResultUploadMessage('කරුණාකර Result Date එක තෝරන්න.', 'warning');
+                return;
+            }
+
+            const files = {
+                imageUrl: document.getElementById('resultImageFile')?.files[0] || null,
+                pdfA4Url: document.getElementById('resultA4File')?.files[0] || null,
+                pdf2in1Url: document.getElementById('result2in1File')?.files[0] || null,
+                nlbUrl: document.getElementById('resultNlbFile')?.files[0] || null,
+                dlbUrl: document.getElementById('resultDlbFile')?.files[0] || null
+            };
+
+            if(!Object.values(files).some(Boolean)){
+                showResultUploadMessage('අවම වශයෙන් එක file එකක්වත් තෝරන්න.', 'warning');
+                return;
+            }
+
+            const dateObj = new Date(dateStr + 'T00:00:00');
+            let expiryDate = expiryStr ? new Date(expiryStr + 'T23:59:59') : new Date(dateObj);
+            if(!expiryStr){
+                expiryDate.setMonth(expiryDate.getMonth()+7);
+            }
+
+            try{
+                showResultUploadMessage('Upload ආරම්භ කළා...', 'info');
+                setUploadStatus('Uploading files...', 0);
+
+                const entries = [
+                    ['imageUrl', files.imageUrl, `results/${dateStr}/image.jpg`],
+                    ['pdfA4Url', files.pdfA4Url, `results/${dateStr}/a4.pdf`],
+                    ['pdf2in1Url', files.pdf2in1Url, `results/${dateStr}/2in1.pdf`],
+                    ['nlbUrl', files.nlbUrl, `results/${dateStr}/nlb.pdf`],
+                    ['dlbUrl', files.dlbUrl, `results/${dateStr}/dlb.pdf`]
+                ];
+
+                const selected = entries.filter(x => x[1]);
+                const urls = {};
+                let completed = 0;
+
+                for(const [field,file,path] of selected){
+                    setUploadStatus(`${file.name} upload වෙමින්...`, (completed/selected.length)*100);
+                    urls[field] = await uploadOneResultFile(file,path,pct=>{
+                        setUploadStatus(`${file.name} upload වෙමින්...`, ((completed + pct/100)/selected.length)*100);
+                    });
+                    completed++;
+                    setUploadStatus(`${file.name} uploaded ✓`, (completed/selected.length)*100);
+                }
+
+                const data = {
+                    id: dateStr,
+                    date: firebase.firestore.Timestamp.fromDate(dateObj),
+                    expireAt: firebase.firestore.Timestamp.fromDate(expiryDate),
+                    ...urls,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                await db.collection('results').doc(dateStr).set(data,{merge:true});
+
+                setUploadStatus('සියලුම uploads සාර්ථකයි ✓',100);
+                showResultUploadMessage(
+                    `<b>${dateStr}</b> result එක Firebase Storage + Firestore වෙත සාර්ථකව save කළා.`,
+                    'success'
+                );
+            }catch(error){
+                console.error('Result upload error:', error);
+                setUploadStatus('Upload failed',0);
+                showResultUploadMessage(`Upload error: ${error.message}`, 'error');
+            }
+        };
+
+        window.clearResultUploadForm = function(){
+            ['resultImageFile','resultA4File','result2in1File','resultNlbFile','resultDlbFile'].forEach(id=>{
+                const el=document.getElementById(id); if(el) el.value='';
+            });
+            const msg=document.getElementById('resultUploadMsg'); if(msg) msg.innerHTML='';
+            const wrap=document.getElementById('resultUploadProgress'); if(wrap) wrap.style.display='none';
+            setDefaultResultUploadDate();
+        };
+
+        setTimeout(setDefaultResultUploadDate, 500);
+
+
+        // ==================== RESULTS MANAGER ====================
+        let managerResults = [];
+
+        const managerFileMap = [
+            {field:'imageUrl', label:'Result Image', icon:'fa-image', fileName:'image.jpg', accept:'image/*'},
+            {field:'pdfA4Url', label:'A4 PDF', icon:'fa-file-pdf', fileName:'a4.pdf', accept:'application/pdf,.pdf'},
+            {field:'pdf2in1Url', label:'2 in 1 PDF', icon:'fa-file-pdf', fileName:'2in1.pdf', accept:'application/pdf,.pdf'},
+            {field:'nlbUrl', label:'NLB PDF', icon:'fa-file-pdf', fileName:'nlb.pdf', accept:'application/pdf,.pdf'},
+            {field:'dlbUrl', label:'DLB PDF', icon:'fa-file-pdf', fileName:'dlb.pdf', accept:'application/pdf,.pdf'}
+        ];
+
+        function managerEsc(value){
+            return String(value ?? '').replace(/[&<>"']/g, m => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+            }[m]));
+        }
+
+        function managerDateLabel(dateStr){
+            if(!dateStr) return '—';
+            const d = new Date(dateStr + 'T00:00:00');
+            if(Number.isNaN(d.getTime())) return dateStr;
+            return d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+        }
+
+        async function loadResultsManager(){
+            const list = document.getElementById('resultsManagerList');
+            if(!list) return;
+
+            if(!auth.currentUser){
+                list.innerHTML = '<div class="manager-empty">Admin login අවශ්‍යයි.</div>';
+                return;
+            }
+
+            list.innerHTML = '<div class="manager-loading"><i class="fas fa-spinner fa-spin"></i> Results load වෙමින්...</div>';
+
+            try{
+                const snap = await db.collection('results').get();
+                managerResults = snap.docs.map(doc => {
+                    const d = doc.data() || {};
+                    return {
+                        docId: doc.id,
+                        dateStr: d.id || doc.id,
+                        data: d
+                    };
+                }).filter(x => /^\d{4}-\d{2}-\d{2}$/.test(String(x.dateStr)))
+                  .sort((a,b) => String(b.dateStr).localeCompare(String(a.dateStr)));
+
+                renderResultsManager();
+            }catch(error){
+                console.error('Results manager load error:', error);
+                list.innerHTML = `<div class="message message-error">Results load error: ${managerEsc(error.message)}</div>`;
+            }
+        }
+
+        function filterResultsManager(){
+            renderResultsManager();
+        }
+
+        function clearManagerFilters(){
+            const date = document.getElementById('managerDateFilter');
+            const search = document.getElementById('managerSearch');
+            if(date) date.value='';
+            if(search) search.value='';
+            renderResultsManager();
+        }
+
+        function renderResultsManager(){
+            const list = document.getElementById('resultsManagerList');
+            if(!list) return;
+
+            const dateFilter = document.getElementById('managerDateFilter')?.value || '';
+            const search = (document.getElementById('managerSearch')?.value || '').trim().toLowerCase();
+
+            const filtered = managerResults.filter(item => {
+                const matchesDate = !dateFilter || item.dateStr === dateFilter;
+                const matchesSearch = !search || item.dateStr.toLowerCase().includes(search);
+                return matchesDate && matchesSearch;
+            });
+
+            if(!filtered.length){
+                list.innerHTML = '<div class="manager-empty"><i class="fas fa-folder-open" style="font-size:28px;margin-bottom:10px;"></i><br>මෙම search/filter එකට Result එකක් නැහැ.</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(item => {
+                const d = item.data || {};
+                const files = managerFileMap.map(file => {
+                    const exists = !!d[file.field];
+                    return `
+                        <div class="manager-file">
+                            <div class="manager-file-name"><i class="fas ${file.icon}"></i> ${file.label}</div>
+                            <div class="manager-file-state ${exists?'ok':'no'}">
+                                ${exists ? '<i class="fas fa-check-circle"></i> Uploaded' : '<i class="fas fa-times-circle"></i> Not uploaded'}
+                            </div>
+                            <div class="manager-file-actions">
+                                <button class="preview" ${exists ? `onclick="previewResultFile(${JSON.stringify(item.dateStr)},${JSON.stringify(file.field)})"` : 'disabled style="opacity:.35;cursor:not-allowed"'}><i class="fas fa-eye"></i></button>
+                                <button class="replace" onclick="replaceResultFile(${JSON.stringify(item.dateStr)},${JSON.stringify(file.field)},${JSON.stringify(file.fileName)},${JSON.stringify(file.accept)})"><i class="fas fa-sync"></i></button>
+                                <button class="delete" ${exists ? `onclick="deleteResultFile(${JSON.stringify(item.dateStr)},${JSON.stringify(file.field)},${JSON.stringify(file.fileName)})"` : 'disabled style="opacity:.35;cursor:not-allowed"'}><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>`;
+                }).join('');
+
+                return `
+                    <div class="manager-result">
+                        <div class="manager-result-head">
+                            <div>
+                                <div class="manager-date"><i class="fas fa-calendar-day" style="color:#ffb6c9;margin-right:7px;"></i>${managerEsc(managerDateLabel(item.dateStr))}</div>
+                                <div class="manager-meta">Document: ${managerEsc(item.docId)} &nbsp;•&nbsp; Storage: results/${managerEsc(item.dateStr)}/</div>
+                            </div>
+                            <button class="btn-danger btn-sm" onclick="deleteWholeResult(${JSON.stringify(item.dateStr)})">
+                                <i class="fas fa-folder-minus"></i> Delete Result
+                            </button>
+                        </div>
+                        <div class="manager-files">${files}</div>
+                    </div>`;
+            }).join('');
+        }
+
+        window.previewResultFile = function(dateStr, field){
+            const item = managerResults.find(x => x.dateStr === dateStr);
+            const url = item?.data?.[field];
+            if(!url){
+                showResultUploadMessage('Preview URL එක හමු වුණේ නැහැ.', 'warning');
+                return;
+            }
+            window.open(url,'_blank','noopener,noreferrer');
+        };
+
+        function pickReplacementFile(accept){
+            return new Promise(resolve => {
+                const input = document.createElement('input');
+                input.type='file';
+                input.accept=accept || '*/*';
+                input.style.display='none';
+                document.body.appendChild(input);
+                input.addEventListener('change',()=>{
+                    const file=input.files?.[0] || null;
+                    input.remove();
+                    resolve(file);
+                },{once:true});
+                input.click();
+            });
+        }
+
+        window.replaceResultFile = async function(dateStr, field, fileName, accept){
+            if(!auth.currentUser) return showResultUploadMessage('Admin login අවශ්‍යයි.', 'error');
+
+            const file = await pickReplacementFile(accept);
+            if(!file) return;
+
+            try{
+                setUploadStatus(`${fileName} replace වෙමින්...`,30);
+                const url = await uploadOneResultFile(file, `results/${dateStr}/${fileName}`, pct=>{
+                    setUploadStatus(`${fileName} replace වෙමින්...`,pct);
+                });
+
+                await db.collection('results').doc(dateStr).set({
+                    [field]: url,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                },{merge:true});
+
+                setUploadStatus(`${fileName} replaced ✓`,100);
+                showResultUploadMessage(`<b>${managerEsc(dateStr)}</b> — ${managerEsc(fileName)} successfully replaced.`, 'success');
+                await loadResultsManager();
+            }catch(error){
+                console.error('Replace result file error:',error);
+                showResultUploadMessage(`Replace error: ${managerEsc(error.message)}`,'error');
+            }
+        };
+
+        window.deleteResultFile = async function(dateStr, field, fileName){
+            if(!auth.currentUser) return showResultUploadMessage('Admin login අවශ්‍යයි.', 'error');
+
+            if(!confirm(`${dateStr} හි ${fileName} delete කරන්නද?`)) return;
+
+            try{
+                const ref = storage.ref(`results/${dateStr}/${fileName}`);
+                try{ await ref.delete(); }catch(storageError){
+                    // If the object is already missing, still remove the Firestore URL.
+                    if(storageError.code !== 'storage/object-not-found') throw storageError;
+                }
+
+                await db.collection('results').doc(dateStr).set({
+                    [field]: firebase.firestore.FieldValue.delete(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                },{merge:true});
+
+                showResultUploadMessage(`${dateStr} — ${fileName} deleted successfully.`,'success');
+                await loadResultsManager();
+            }catch(error){
+                console.error('Delete result file error:',error);
+                showResultUploadMessage(`Delete error: ${managerEsc(error.message)}`,'error');
+            }
+        };
+
+        window.deleteWholeResult = async function(dateStr){
+            if(!auth.currentUser) return showResultUploadMessage('Admin login අවශ්‍යයි.', 'error');
+
+            const item = managerResults.find(x => x.dateStr === dateStr);
+            if(!item) return;
+
+            if(!confirm(`${dateStr} Result එකේ files සියල්ල සහ Firestore document එක delete කරන්නද?\n\nමෙය undo කළ නොහැක.`)) return;
+
+            try{
+                setUploadStatus(`${dateStr} result delete වෙමින්...`,10);
+
+                for(const file of managerFileMap){
+                    try{
+                        await storage.ref(`results/${dateStr}/${file.fileName}`).delete();
+                    }catch(error){
+                        if(error.code !== 'storage/object-not-found') throw error;
+                    }
+                }
+
+                await db.collection('results').doc(dateStr).delete();
+
+                setUploadStatus(`${dateStr} result deleted ✓`,100);
+                showResultUploadMessage(`<b>${managerEsc(dateStr)}</b> result එක සහ එහි files සියල්ල delete කළා.`,'success');
+                await loadResultsManager();
+            }catch(error){
+                console.error('Delete whole result error:',error);
+                showResultUploadMessage(`Delete result error: ${managerEsc(error.message)}`,'error');
+            }
+        };
+
+        // Load the manager automatically when the Upload Results tab is opened.
+        const originalShowTab = window.showTab;
+        window.showTab = function(tab){
+            originalShowTab(tab);
+            if(tab === 'resultsUpload'){
+                setDefaultResultUploadDate();
+                loadResultsManager();
+            }
+        };
+
         // ==================== TAB SWITCHING ====================
         window.showTab = function(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(tab + 'Tab').classList.add('active');
-            event.target.classList.add('active');
-            document.getElementById('pageTitle').innerHTML = event.target.innerText || 'Dashboard';
+            const target = document.getElementById(tab + 'Tab');
+            if(target) target.classList.add('active');
+            const clicked = (typeof event !== 'undefined' && event.target) ? event.target.closest('.tab') : null;
+            if(clicked) clicked.classList.add('active');
+            const labelMap = {payments:'Payment Requests',users:'All Users',active:'Active Users',resultsUpload:'Upload Results'};
+            document.getElementById('pageTitle').innerHTML = clicked?.innerText || labelMap[tab] || 'Dashboard';
+            if(tab === 'resultsUpload') setDefaultResultUploadDate();
         };
 
         // Sidebar menu click
@@ -664,7 +1129,8 @@
                     const tabMap = {
                         'payments': 'payments',
                         'users': 'users',
-                        'active': 'active'
+                        'active': 'active',
+                        'resultsUpload': 'resultsUpload'
                     };
                     if (tabMap[tab]) {
                         showTab(tabMap[tab]);
