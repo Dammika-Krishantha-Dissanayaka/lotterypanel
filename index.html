@@ -192,6 +192,142 @@ footer{text-align:center;margin-top:15px;color:#7f92b0;font-size:10px}
  .nav-btn{justify-content:center;padding:9px 5px;font-size:11px}.selected-date{font-size:20px}
 }
 </style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+#analyzerPanel *{box-sizing:border-box;margin:0;padding:0}
+#analyzerPanel{--an-bg1:#07111f;--an-bg2:#0c1e36;--an-card:rgba(255,255,255,.055);
+ --an-line:rgba(255,255,255,.08);--an-text:#edf5ff;--an-muted:rgba(237,245,255,.52);
+ --an-blue:#4da3ff;--an-cyan:#48d7e8;--an-green:#65e6ad;--an-gold:#ffd166;
+ --an-red:#ff6b6b;--an-purple:#b89cff;}
+#analyzerPanel .glass{background:var(--an-card);border:1px solid var(--an-line);backdrop-filter:blur(18px);
+ -webkit-backdrop-filter:blur(18px);box-shadow:0 18px 50px rgba(0,0,0,.22);}
+#analyzerPanel .header{display:flex;align-items:center;gap:16px;padding:20px 22px;border-radius:28px;margin-bottom:14px}
+#analyzerPanel .logo{width:60px;height:60px;border-radius:20px;display:grid;place-items:center;font-size:27px;
+ background:linear-gradient(135deg,#2478c9,#16355d);box-shadow:0 10px 30px rgba(36,120,201,.3)}
+#analyzerPanel h1{font-size:25px;line-height:1.25}
+#analyzerPanel h1 small{display:block;color:#8ecbff;font-size:13px;font-weight:400;margin-top:4px}
+#analyzerPanel .status{margin-left:auto;display:flex;align-items:center;gap:8px;padding:7px 14px;border-radius:30px;
+ background:rgba(101,230,173,.1);border:1px solid rgba(101,230,173,.18);color:var(--an-green);font-size:12px;font-weight:700}
+#analyzerPanel .dot{width:8px;height:8px;border-radius:50%;background:var(--an-green);box-shadow:0 0 12px var(--an-green)}
+#analyzerPanel .counter{display:flex;justify-content:center;gap:10px;align-items:center;padding:9px 15px;border-radius:30px;margin-bottom:14px;color:var(--an-muted);font-size:13px}
+#analyzerPanel .counter strong{color:#8ed5ff;font-size:20px}
+#analyzerPanel .controls{padding:14px;border-radius:24px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#analyzerPanel .controls label{color:#9fd5ff;font-weight:700;font-size:13px;margin-right:4px}
+#analyzerPanel input[type=date], #analyzerPanel input[type=text]{background:rgba(255,255,255,.055);border:1px solid var(--an-line);color:var(--an-text);
+ border-radius:14px;padding:10px 12px;font-family:inherit;outline:none}
+#analyzerPanel input[type=date]{color-scheme:dark}
+#analyzerPanel button{font-family:inherit;cursor:pointer}
+#analyzerPanel .range-btn, #analyzerPanel .btn{border:1px solid var(--an-line);background:rgba(255,255,255,.045);color:var(--an-muted);
+ padding:9px 14px;border-radius:14px;font-weight:700;transition:.18s}
+#analyzerPanel .range-btn:hover, #analyzerPanel .btn:hover{background:rgba(255,255,255,.09);color:white;transform:translateY(-1px)}
+#analyzerPanel .range-btn.active{background:linear-gradient(135deg,rgba(77,163,255,.3),rgba(36,120,201,.18));color:white;border-color:rgba(77,163,255,.35)}
+#analyzerPanel .btn-primary{background:linear-gradient(135deg,#277ecb,#184a80);color:white;border:0}
+#analyzerPanel .btn-green{background:linear-gradient(135deg,#159c78,#116a65);color:white;border:0}
+#analyzerPanel .tabs{display:flex;gap:9px;border-bottom:0;margin-bottom:18px;flex-wrap:wrap}
+#analyzerPanel .tab{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);color:var(--an-muted);padding:11px 17px;font-size:14px;font-weight:700;border-radius:14px;box-shadow:0 7px 18px rgba(0,0,0,.14);transition:.18s;white-space:nowrap}
+#analyzerPanel .tab:hover{background:rgba(77,163,255,.10);color:#fff;border-color:rgba(77,163,255,.22);transform:translateY(-1px)}
+#analyzerPanel .tab.active{color:#fff;background:linear-gradient(135deg,#277ecb,#174b82);border-color:rgba(91,176,255,.42);box-shadow:0 8px 22px rgba(39,126,203,.24),inset 0 1px rgba(255,255,255,.12)}
+#analyzerPanel .tab-content{display:none}
+#analyzerPanel .tab-content.active{display:block}
+#analyzerPanel .searchbar{display:flex;gap:8px;padding:8px;border-radius:20px;margin-bottom:15px}
+#analyzerPanel .searchbar input{flex:1;font-size:16px}
+#analyzerPanel .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+#analyzerPanel .stat{padding:15px;border-radius:20px}
+#analyzerPanel .stat .icon{font-size:15px;color:var(--an-blue)}
+#analyzerPanel .stat .value{font-size:25px;font-weight:800;margin-top:3px}
+#analyzerPanel .stat .label{font-size:12px;color:var(--an-muted)}
+#analyzerPanel .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:15px}
+#analyzerPanel .card{padding:18px;border-radius:22px}
+#analyzerPanel .wide{grid-column:1/-1}
+#analyzerPanel .card h2{font-size:17px;margin-bottom:13px;display:flex;align-items:center;gap:9px}
+#analyzerPanel .card h2 i{color:var(--an-blue)}
+#analyzerPanel .mini{color:var(--an-muted);font-size:12px}
+#analyzerPanel .heatwrap{overflow:auto}
+#analyzerPanel .heat{display:grid;grid-template-columns:34px repeat(10,minmax(30px,1fr));gap:3px;min-width:430px}
+#analyzerPanel .heat .head, #analyzerPanel .heat .cell{min-height:32px;display:grid;place-items:center;border-radius:7px;font-size:11px;font-weight:800}
+#analyzerPanel .heat .head{background:rgba(255,255,255,.05);color:var(--an-muted)}
+#analyzerPanel .heat .cell{color:#07111f;text-shadow:0 1px 1px rgba(255,255,255,.3);transition:.15s;cursor:pointer}
+#analyzerPanel .heat .cell:hover{transform:scale(1.13);z-index:2}
+#analyzerPanel .legend{display:flex;align-items:center;gap:8px;margin-top:12px;color:var(--an-muted);font-size:11px}
+#analyzerPanel .gradient{width:150px;height:10px;border-radius:20px;background:linear-gradient(90deg,#244f83,#e4bd4b,#d94b4b)}
+#analyzerPanel .rows{display:flex;flex-direction:column;gap:8px}
+#analyzerPanel .row{display:grid;grid-template-columns:48px 1fr 55px;align-items:center;gap:8px;font-size:13px}
+#analyzerPanel .track{height:20px;background:rgba(255,255,255,.055);border-radius:20px;overflow:hidden}
+#analyzerPanel .fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#2879c7,#5cc9e6)}
+#analyzerPanel .fill.hot{background:linear-gradient(90deg,#d94b4b,#ffb347)}
+#analyzerPanel .fill.cold{background:linear-gradient(90deg,#2879c7,#75d7ef)}
+#analyzerPanel .num{font-weight:800;color:#8ed5ff}
+#analyzerPanel .count{text-align:right;color:var(--an-muted);font-weight:700}
+#analyzerPanel .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#analyzerPanel .list{max-height:310px;overflow:auto}
+#analyzerPanel .item{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+#analyzerPanel .item:last-child{border-bottom:0}
+#analyzerPanel .badge{padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--an-muted);font-size:11px}
+#analyzerPanel .hotbox{background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.12);border-radius:16px;padding:12px}
+#analyzerPanel .coldbox{background:rgba(77,163,255,.07);border:1px solid rgba(77,163,255,.12);border-radius:16px;padding:12px}
+#analyzerPanel .pills{display:flex;flex-wrap:wrap;gap:6px}
+#analyzerPanel .pill{padding:5px 10px;border-radius:20px;background:rgba(255,255,255,.06);font-weight:800;font-size:12px}
+#analyzerPanel .pill.red{background:rgba(255,107,107,.12);color:#ff9c9c}
+#analyzerPanel .pill.blue{background:rgba(77,163,255,.12);color:#9dd5ff}
+#analyzerPanel .pill.green{background:rgba(101,230,173,.1);color:#8af0c4}
+#analyzerPanel .compare{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+#analyzerPanel .compare input{text-align:center;width:100%;font-size:20px;font-weight:800}
+#analyzerPanel .comparebox{padding:14px;border-radius:18px;background:rgba(255,255,255,.04)}
+#analyzerPanel .comparebox h3{text-align:center;margin-bottom:8px}
+#analyzerPanel .compareline{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px}
+#analyzerPanel .compareline:last-child{border:0}
+#analyzerPanel .result-list{max-height:500px;overflow:auto}
+#analyzerPanel .result{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;margin-bottom:7px;border-radius:15px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.04)}
+#analyzerPanel .result .big{font-size:24px;font-weight:800;color:var(--an-green);letter-spacing:.5px}
+#analyzerPanel .last2{color:#ffd166;font-weight:900;text-shadow:0 0 12px rgba(255,209,102,.25)}
+#analyzerPanel .search-highlight{display:inline-block;padding:0 4px;border:1px solid #ffd166;border-radius:6px;line-height:1.05}
+#analyzerPanel .date-pink{color:#ffb6c9;font-size:16px;font-weight:800;letter-spacing:.2px}
+#analyzerPanel .letter-box{display:inline-grid;place-items:center;width:38px;height:38px;margin-right:9px;border-radius:9px;background:linear-gradient(135deg,#1769d2,#0d3e83);color:#fff;font-size:22px;font-weight:900;vertical-align:middle;box-shadow:0 6px 18px rgba(23,105,210,.25)}
+#analyzerPanel .empty{text-align:center;padding:35px 15px;color:var(--an-muted)}
+#analyzerPanel .empty i{font-size:35px;opacity:.25;margin-bottom:10px}
+#analyzerPanel .loading{text-align:center;padding:45px;color:var(--an-muted)}
+#analyzerPanel .loading i{font-size:30px;color:var(--an-blue)}
+#analyzerPanel canvas{max-height:300px}
+#analyzerPanel .note{padding:10px 12px;border-radius:14px;background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.13);color:#ffe29a;font-size:12px;line-height:1.6;margin-top:10px}
+#analyzerPanel .error{color:#ff9c9c;background:rgba(255,107,107,.07);padding:12px;border-radius:14px}
+#analyzerPanel .feedback{margin-top:15px}
+#analyzerPanel .feedback textarea{width:100%;min-height:90px;background:rgba(255,255,255,.045);border:1px solid var(--an-line);color:white;border-radius:15px;padding:12px;font-family:inherit;resize:vertical}
+#analyzerPanel .footer{text-align:center;color:rgba(255,255,255,.25);font-size:11px;padding:20px}
+@media (max-width:900px){#analyzerPanel .stats{grid-template-columns:repeat(3,1fr)}
+#analyzerPanel .grid{grid-template-columns:1fr}
+#analyzerPanel .wide{grid-column:auto}}
+@media (max-width:600px){#analyzerPanel .header{padding:15px;flex-wrap:wrap}
+#analyzerPanel .header h1{font-size:19px}
+#analyzerPanel .logo{width:48px;height:48px}
+#analyzerPanel .header>div:last-child{width:100%;margin-left:0!important;text-align:left!important}
+#analyzerPanel .stats{grid-template-columns:repeat(2,1fr)}
+#analyzerPanel .controls{border-radius:18px}
+#analyzerPanel .compare{grid-template-columns:1fr}
+#analyzerPanel .compare>div:nth-child(2){display:none}
+#analyzerPanel .two{grid-template-columns:1fr}
+#analyzerPanel .tabs{overflow:auto}
+#analyzerPanel .tab{white-space:nowrap;padding:10px 14px}}
+#analyzerPanel {
+  --an-bg1:#07111f; --an-bg2:#0c1e36; --an-card:rgba(255,255,255,.055);
+  --an-line:rgba(255,255,255,.08); --an-text:#edf5ff; --an-muted:rgba(237,245,255,.52);
+  --an-blue:#4da3ff; --an-cyan:#48d7e8; --an-green:#65e6ad; --an-gold:#ffd166;
+  --an-red:#ff6b6b; --an-purple:#b89cff;
+}
+#analyzerPanel .analyzer-titlebar {
+  display:flex; align-items:center; justify-content:space-between; gap:15px;
+  padding:16px 18px; margin-bottom:14px; border:1px solid rgba(255,255,255,.08);
+  border-radius:20px; background:rgba(255,255,255,.035);
+}
+#analyzerPanel .analyzer-titlebar h2 {margin:0;font-size:18px}
+#analyzerPanel .analyzer-titlebar h2 i {color:var(--an-gold);margin-right:7px}
+#analyzerPanel .analyzer-live {font-size:11px;color:var(--an-green);display:flex;align-items:center;gap:7px}
+#analyzerPanel .analyzer-live .dot {background:var(--an-green);}
+@media(max-width:600px){
+  #analyzerPanel .analyzer-titlebar {flex-direction:column;align-items:flex-start}
+}
+</style>
+
 </head>
 <body>
 <div class="container">
@@ -217,7 +353,7 @@ footer{text-align:center;margin-top:15px;color:#7f92b0;font-size:10px}
   </div>
 
 
-  <nav class="main-nav" aria-label="Main navigation">
+  <nav id="mainNav" class="main-nav" aria-label="Main navigation" style="display:none;">
     <button class="main-nav-btn active" data-panel="overview" onclick="setMainTab(this,'overview')"><i class="fas fa-house"></i><span>Overview</span></button>
     <button class="main-nav-btn" data-panel="results" onclick="setMainTab(this,'results')"><i class="fas fa-trophy"></i><span>ප්‍රතිඵල</span></button>
     <button class="main-nav-btn" data-panel="search" onclick="setMainTab(this,'search')"><i class="fas fa-magnifying-glass"></i><span>සෙවීම</span></button>
@@ -276,6 +412,127 @@ footer{text-align:center;margin-top:15px;color:#7f92b0;font-size:10px}
 </div>
 <footer><i class="fas fa-shield-halved"></i> KRISHAN LOTTERY SYSTEM • ආරක්ෂිත ප්‍රවේශය • රු. 500/මාසය</footer>
 </div>
+
+<section id="analyzerPanel" class="analyzer-module" style="display:none">
+<div class="container">
+
+<div class="analyzer-titlebar"><div><h2><i class="fas fa-chart-column"></i> මහජන සම්පත — Smart Analysis</h2><div class="mini">Historical Search • Statistics • Patterns • Trends</div></div><div class="analyzer-live"><span class="dot"></span> Firebase</div></div><section class="controls glass">
+  <label><i class="far fa-calendar-alt"></i> කාල සීමාව</label>
+  <button class="range-btn" data-range="1">මාස 1</button>
+  <button class="range-btn" data-range="3">මාස 3</button>
+  <button class="range-btn" data-range="6">මාස 6</button>
+  <button class="range-btn" data-range="12">අවුරුදු 1</button>
+  <button class="range-btn" data-range="24">අවුරුදු 2</button>
+  <button class="range-btn active" data-range="all">සියල්ල</button>
+  <span style="color:var(--muted)">|</span>
+  <input type="date" id="startDate">
+  <span class="mini">සිට</span>
+  <input type="date" id="endDate">
+  <button class="btn btn-green" id="customBtn"><i class="fas fa-check"></i> යොදන්න</button>
+  <button class="btn" id="resetRange"><i class="fas fa-undo"></i></button>
+</section>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="overview"><i class="fas fa-home"></i> Overview</button>
+  <button class="tab" data-tab="search"><i class="fas fa-search"></i> සෙවීම</button>
+  <button class="tab" data-tab="analytics"><i class="fas fa-chart-pie"></i> විශ්ලේෂණය</button>
+  <button class="tab" data-tab="numbers"><i class="fas fa-hashtag"></i> Number Explorer</button>
+  <button class="tab" data-tab="patterns"><i class="fas fa-project-diagram"></i> Patterns</button>
+</nav>
+
+<section class="tab-content active" id="tab-overview">
+  <div class="stats">
+    <div class="stat glass"><div class="icon"><i class="fas fa-database"></i></div><div class="value" id="sDraws">0</div><div class="label">Draws</div></div>
+    <div class="stat glass"><div class="icon">🔥</div><div class="value" id="sHot">--</div><div class="label">Hot 2-digit</div></div>
+    <div class="stat glass"><div class="icon">❄️</div><div class="value" id="sCold">--</div><div class="label">Cold 2-digit</div></div>
+    <div class="stat glass"><div class="icon">⏳</div><div class="value" id="sOverdue">--</div><div class="label">Largest current gap</div></div>
+    <div class="stat glass"><div class="icon">📅</div><div class="value" id="sLatest">--</div><div class="label">Latest result</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card glass">
+      <h2><i class="fas fa-fire"></i> ඉහළම Hot අංක 10</h2>
+      <div id="overviewHot" class="two"></div>
+    </div>
+    <div class="card glass">
+      <h2><i class="fas fa-snowflake"></i> අඩුම Frequency අංක</h2>
+      <div id="overviewCold"></div>
+    </div>
+    <div class="card glass wide">
+      <h2><i class="fas fa-info-circle"></i> මේ කාල සීමාවේ සාරාංශය</h2>
+      <div id="overviewText" class="mini"></div>
+      <div class="note">මෙහි පෙන්වන්නේ ඉතිහාසගත සංඛ්‍යාන පමණි. Frequency, gap හෝ pattern එකක් මත ඊළඟ lottery draw එක නිශ්චිතව පුරෝකථනය කළ නොහැක.</div>
+    </div>
+  </div>
+</section>
+
+<section class="tab-content" id="tab-search">
+  <div class="searchbar glass">
+    <input id="searchInput" type="text" inputmode="numeric" maxlength="20" placeholder="අග අංක 1ක් හෝ 2ක් සොයන්න... උදා: 7 / 37">
+    <button class="btn btn-primary" id="searchBtn"><i class="fas fa-search"></i> සොයන්න</button>
+    <button class="btn" id="clearSearch"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="card glass">
+    <h2><i class="fas fa-list"></i> ප්‍රතිඵල <span class="badge" id="resultCount">0</span></h2><div class="mini" style="margin-bottom:10px">Search නොකළ විට අග ඉලක්කම් 2 පාටින් පමණක් පෙන්වයි. Search කළ විට සෙවූ අග ඉලක්කම/අංක 2 කොටුවකින් highlight කරයි.</div>
+    <div id="searchResults" class="result-list"></div>
+  </div>
+</section>
+
+<section class="tab-content" id="tab-analytics">
+  <div class="card glass wide" style="margin-bottom:15px">
+    <h2><i class="fas fa-fire"></i> 00–99 Frequency Heatmap <span class="mini" style="margin-left:auto">තද වර්ණ = වැඩි frequency</span></h2>
+    <div class="heatwrap"><div id="heatmap" class="heat"></div></div>
+    <div class="legend"><span>අඩු</span><div class="gradient"></div><span>වැඩි</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card glass"><h2><i class="fas fa-chart-bar"></i> අග ඉලක්කම් 0–9</h2><div id="digitBars" class="rows"></div></div>
+    <div class="card glass"><h2><i class="fas fa-layer-group"></i> 10-අංක කලාප</h2><div id="rangeBars" class="rows"></div></div>
+    <div class="card glass wide"><h2><i class="fas fa-chart-line"></i> 7 / 14 / 30 / 60 Draw Trend</h2><canvas id="trendChart"></canvas></div>
+    <div class="card glass"><h2><i class="fas fa-calendar-week"></i> Weekday Analysis</h2><div id="weekdayBars" class="rows"></div></div>
+    <div class="card glass"><h2><i class="fas fa-balance-scale"></i> Odd / Even & High / Low</h2><div id="balanceBars" class="rows"></div></div>
+  </div>
+</section>
+
+<section class="tab-content" id="tab-numbers">
+  <div class="card glass">
+    <h2><i class="fas fa-search-plus"></i> Number Explorer</h2>
+    <div class="searchbar" style="margin-bottom:12px">
+      <input id="numberExplorerInput" type="text" inputmode="numeric" maxlength="2" placeholder="00–99">
+      <button class="btn btn-primary" id="exploreBtn"><i class="fas fa-magnifying-glass"></i> බලන්න</button>
+    </div>
+    <div id="numberExplorer"></div>
+  </div>
+  <div class="card glass feedback">
+    <h2><i class="fas fa-balance-scale"></i> Number Compare</h2>
+    <div class="compare">
+      <div class="comparebox"><input id="compareA" type="text" inputmode="numeric" maxlength="2" value="27"></div>
+      <div style="font-size:22px;color:var(--gold)">VS</div>
+      <div class="comparebox"><input id="compareB" type="text" inputmode="numeric" maxlength="2" value="72"></div>
+    </div>
+    <button class="btn btn-primary" id="compareBtn" style="width:100%;margin-top:12px">සසඳන්න</button>
+    <div id="compareResult" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<section class="tab-content" id="tab-patterns">
+  <div class="grid">
+    <div class="card glass"><h2><i class="fas fa-clock"></i> Current Gap / Overdue View</h2><div id="gapList" class="list"></div></div>
+    <div class="card glass"><h2><i class="fas fa-retweet"></i> Reverse Pairs</h2><div id="reversePairs" class="list"></div></div>
+    <div class="card glass"><h2><i class="fas fa-link"></i> Consecutive / Repeat</h2><div id="patternSummary"></div></div>
+    <div class="card glass"><h2><i class="fas fa-calculator"></i> Digit Sum Distribution</h2><div id="sumBars" class="rows"></div></div>
+    <div class="card glass wide"><h2><i class="fas fa-calendar-check"></i> දිනයේ අග 2 = ජය අංකයේ අග 2</h2><div id="dateMatch"></div></div>
+    <div class="card glass wide"><h2><i class="fas fa-hashtag"></i> Draw ID අග 2 = ජය අංක අග 2</h2><div id="idMatch"></div></div>
+  </div>
+</section>
+
+</main>
+
+<div id="globalError" style="display:none;margin-top:15px"></div>
+<div class="footer">KRISHAN LOTTERY SYSTEM • Historical statistical analysis panel</div>
+</div>
+</section>
+
 <!-- PDF Modal -->
 <div id="pdfModal" class="modal"><div class="modal-content"><div class="modal-header"><span id="modalTitle">PDF Viewer</span><button class="modal-close" onclick="closePDFModal()">&times;</button></div><div class="modal-body"><iframe id="pdfFrame" src=""></iframe></div></div></div>
 
@@ -414,6 +671,7 @@ footer{text-align:center;margin-top:15px;color:#7f92b0;font-size:10px}
         async function showDashboard(userData, phone, sessions, activeDevices) {
             document.getElementById('authSection').style.display = 'none';
             document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('mainNav').style.display = 'flex';
             document.getElementById('welcomeUser').innerHTML = `<i class="fas fa-user-circle"></i> ආයුබෝවන්, ${userData.fullName}`;
             document.getElementById('userPhoneText').innerHTML = `<i class="fas fa-phone"></i> ${phone}`;
             const lastSession = sessions?.slice(-1)[0];
@@ -504,25 +762,484 @@ footer{text-align:center;margin-top:15px;color:#7f92b0;font-size:10px}
         auth.onAuthStateChanged(async (user) => { if(user) { const email = user.email; if(email && email.includes('@lottery.com')) { const phone = email.replace('@lottery.com', ''); const userQuery = await db.collection('users').where('phone', '==', phone).get(); if(!userQuery.empty) { const u = userQuery.docs[0].data(); currentUserData = { ...u, docId: userQuery.docs[0].id }; if(u.status === 'approved' && u.expiryDate && new Date() > u.expiryDate.toDate()) { await db.collection('users').doc(currentUserData.docId).update({ status: 'expired' }); u.status = 'expired'; } showDashboard(u, phone, u.sessions || [], u.activeDevices || []); } } } });
     </script>
 
+
 <script>
+let mahajanaAnalyzerLoaded = false;
+
+function analyzerActivateTab(tabName){
+  document.querySelectorAll('#analyzerPanel .tab').forEach(function(t){
+    t.classList.toggle('active', t.dataset.tab === tabName);
+  });
+  document.querySelectorAll('#analyzerPanel .tab-content').forEach(function(p){
+    p.classList.toggle('active', p.id === 'tab-' + tabName);
+  });
+}
+
+async function openMahajanaAnalyzer(tabName='overview'){
+  const panel = document.getElementById('analyzerPanel');
+  if(!panel) return;
+  panel.style.display = 'block';
+  analyzerActivateTab(tabName);
+  if(!mahajanaAnalyzerLoaded){
+    mahajanaAnalyzerLoaded = true;
+    if(typeof logMahajanaView === 'function') logMahajanaView();
+    if(typeof fetchData === 'function') await fetchData('all');
+  }
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function hideMahajanaAnalyzer(){
+  const panel = document.getElementById('analyzerPanel');
+  if(panel) panel.style.display = 'none';
+}
+
 function setMainTab(button, panel){
   document.querySelectorAll('.main-nav-btn').forEach(function(b){ b.classList.remove('active'); });
   button.classList.add('active');
+
   if(panel === 'overview'){
-    var d=document.getElementById('dashboardView');
+    hideMahajanaAnalyzer();
+    const d=document.getElementById('dashboardView');
     if(d) d.scrollIntoView({behavior:'smooth', block:'start'});
   } else if(panel === 'results'){
-    var c=document.getElementById('contentSection');
+    hideMahajanaAnalyzer();
+    const c=document.getElementById('contentSection');
     if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
   } else if(panel === 'search'){
-    var s=document.getElementById('loginPhone');
-    if(s){ s.scrollIntoView({behavior:'smooth',block:'center'}); s.focus(); }
-  } else {
-    var c=document.getElementById('contentSection');
-    if(c) c.scrollIntoView({behavior:'smooth', block:'start'});
+    openMahajanaAnalyzer('search');
+  } else if(panel === 'analyzer'){
+    openMahajanaAnalyzer('overview');
+  } else if(panel === 'statistics'){
+    openMahajanaAnalyzer('analytics');
+  } else if(panel === 'patterns'){
+    openMahajanaAnalyzer('patterns');
+  } else if(panel === 'trends'){
+    openMahajanaAnalyzer('analytics');
+    setTimeout(function(){
+      const trend=document.getElementById('trendChart');
+      if(trend) trend.scrollIntoView({behavior:'smooth', block:'center'});
+    }, 350);
   }
 }
 </script>
 
+
+<script>
+const COLLECTION="mahajana_results";
+let allDocs=[];
+let currentRange="all";
+let customStart=null,customEnd=null;
+let trendChart=null;
+
+const $=id=>document.getElementById(id);
+
+function esc(v){
+ return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function pad2(n){return String(n).padStart(2,"0")}
+function dateObj(v){
+ if(!v)return null;
+ if(v.toDate)return v.toDate();
+ if(v instanceof Date)return v;
+ const d=new Date(v);return isNaN(d.getTime())?null:d;
+}
+function dayKey(d){return d?`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`:""}
+function niceDate(d){return d?`${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`:"—"}
+function cleanNumber(v){return String(v??"").trim().replace(/\s+/g,"")}
+function suffix2(n){return cleanNumber(n).slice(-2)}
+function suffix1(n){return cleanNumber(n).slice(-1)}
+function renderWinningNumber(n, digits=2, boxed=false){
+ const value=cleanNumber(n);
+ if(!value)return "—";
+
+ // Separate the leading letter (E/U/B/D/S...) into its own box.
+ const first = /^[A-Za-z]/.test(value) ? value.charAt(0) : "";
+ const body = first ? value.slice(1) : value;
+ const count=Math.min(Math.max(Number(digits)||2,1),2);
+
+ let numberHtml;
+ if(body.length<=count){
+   numberHtml=`<span class="${boxed?"search-highlight ":""}last2">${esc(body)}</span>`;
+ }else{
+   numberHtml=`${esc(body.slice(0,-count))}<span class="${boxed?"search-highlight ":""}last2">${esc(body.slice(-count))}</span>`;
+ }
+ return `${first?`<span class="letter-box">${esc(first)}</span>`:""}${numberHtml}`;
+}
+function highlightSuffix(n, digits=2, boxed=false){
+ return renderWinningNumber(n,digits,boxed);
+}
+function highlightLast2(n){
+ return renderWinningNumber(n,2,false);
+}
+
+function getDateStart(months){
+ const d=new Date();d.setHours(0,0,0,0);d.setMonth(d.getMonth()-months);return d;
+}
+function activeData(){
+ let data=allDocs;
+ if(customStart&&customEnd){
+  const s=new Date(customStart+"T00:00:00");
+  const e=new Date(customEnd+"T23:59:59.999");
+  return data.filter(x=>x.date&&x.date>=s&&x.date<=e);
+ }
+ if(currentRange==="all")return data;
+ const s=getDateStart(Number(currentRange));
+ return data.filter(x=>x.date&&x.date>=s);
+}
+
+/* =========================
+   DATA LOADING
+   Important: range is pushed to Firestore when possible.
+   "All" intentionally loads all history because users need history.
+   ========================= */
+async function fetchData(mode="all"){
+ setLoading(true);
+ try{
+  let q=db.collection(COLLECTION).orderBy("date","desc");
+  if(mode!=="all"&&!customStart){
+   q=q.where("date",">=",getDateStart(Number(mode)));
+  }else if(customStart&&customEnd){
+   q=q.where("date",">=",new Date(customStart+"T00:00:00"))
+      .where("date","<=",new Date(customEnd+"T23:59:59.999"));
+  }
+  const snap=await q.get();
+  allDocs=[];
+  snap.forEach(doc=>{
+   const d=doc.data();
+   const date=dateObj(d.date);
+   allDocs.push({id:doc.id,fullNumber:cleanNumber(d.fullNumber),numberId:d.id??"",date});
+  });
+  allDocs.sort((a,b)=>(b.date?.getTime()||0)-(a.date?.getTime()||0));
+  $("dataInfo").textContent=`${allDocs.length.toLocaleString()} records loaded`;
+  renderAll();
+  $("loading").style.display="none";
+  $("app").style.display="block";
+ }catch(err){
+  console.error(err);
+  $("loading").style.display="none";
+  $("app").style.display="block";
+  showGlobalError("දත්ත ලබා ගැනීමේ දෝෂයකි: "+esc(err.message));
+ }
+}
+function setLoading(on){
+ if(on){
+  $("loading").style.display="block";
+  $("app").style.display="none";
+ }
+}
+function showGlobalError(msg){$("globalError").innerHTML=`<div class="error">${msg}</div>`;$("globalError").style.display="block"}
+
+/* =========================
+   STATISTICS ENGINE
+   ========================= */
+function stats(data){
+ const freq1=Array(10).fill(0),freq2=Array(100).fill(0),ranges=Array(10).fill(0);
+ const sums=Array(19).fill(0);
+ let odd=0,even=0,high=0,low=0;
+ const weekday=Array(7).fill(0);
+ const lastSeen=Array(100).fill(null);
+ const appearances=Array(100).fill(0);
+ const positions=Array(100).fill(null).map(()=>[]);
+ let valid=0;
+
+ data.forEach(r=>{
+  const n=cleanNumber(r.fullNumber);if(!n)return;
+  const a=suffix1(n),b=suffix2(n);
+  const d1=Number(a),d2=Number(b);
+  if(Number.isInteger(d1)&&d1>=0&&d1<=9)freq1[d1]++;
+  if(/^\d{1,2}$/.test(b)){
+   const v=d2;if(v>=0&&v<=99){freq2[v]++;ranges[Math.floor(v/10)]++;appearances[v]++;positions[v].push(r);}
+  }
+  const ds=n.replace(/\D/g,"").slice(-2);
+  if(ds.length===2)sums[Number(ds[0])+Number(ds[1])]++;
+  if(d2%2===0)even++;else odd++;
+  if(d2>=50)high++;else low++;
+  if(r.date)weekday[r.date.getDay()]++;
+  valid++;
+ });
+ for(let i=0;i<100;i++){
+  if(positions[i].length)lastSeen[i]=positions[i][0].date;
+ }
+ return {freq1,freq2,ranges,sums,odd,even,high,low,weekday,lastSeen,appearances,positions,valid};
+}
+
+/* =========================
+   OVERVIEW
+   ========================= */
+function renderOverview(data,s){
+ const sorted=Array.from({length:100},(_,i)=>i).sort((a,b)=>s.freq2[b]-s.freq2[a]);
+ const hot=sorted.slice(0,10), cold=Array.from({length:100},(_,i)=>i).sort((a,b)=>s.freq2[a]-s.freq2[b]).slice(0,10);
+ $("sDraws").textContent=s.valid.toLocaleString();
+ $("sHot").textContent=pad2(hot[0]??0);
+ $("sCold").textContent=pad2(cold[0]??0);
+ const gapInfo=currentGaps(data,s);
+ const maxGap=gapInfo[0];
+ $("sOverdue").textContent=maxGap?`${pad2(maxGap.num)} • ${maxGap.gap}`:"--";
+ $("sLatest").textContent=data[0]?.date?niceDate(data[0].date):"--";
+
+ $("overviewHot").innerHTML=hot.map(n=>`<div class="hotbox"><span class="num">${pad2(n)}</span><span class="badge">${s.freq2[n]} වාර</span></div>`).join("");
+ $("overviewCold").innerHTML=`<div class="pills">${cold.map(n=>`<span class="pill blue">${pad2(n)} • ${s.freq2[n]}</span>`).join("")}</div>`;
+ const dates=data.filter(x=>x.date).map(x=>x.date).sort((a,b)=>a-b);
+ $("overviewText").innerHTML=`
+ <b>${s.valid.toLocaleString()}</b> valid results in selected period.
+ ${dates.length?`පැරණිතම: <b>${niceDate(dates[0])}</b> • අලුත්ම: <b>${niceDate(dates.at(-1))}</b> • 00–99 අතර නොඇදුණු අංක: <b>${s.freq2.filter(x=>x===0).length}</b>`:""}
+ `;
+}
+
+/* =========================
+   HEATMAP
+   ========================= */
+function heatColor(v,max,min){
+ if(max===min)return "#d6e5f3";
+ const t=(v-min)/(max-min);
+ const r=Math.round(36+(220-36)*t);
+ const g=Math.round(92+(70-92)*t);
+ const b=Math.round(145+(70-145)*t);
+ return `rgb(${r},${g},${b})`;
+}
+function renderHeatmap(s){
+ const min=Math.min(...s.freq2),max=Math.max(...s.freq2);
+ let h=`<div class="head"></div>`;
+ for(let u=0;u<10;u++)h+=`<div class="head">${u}</div>`;
+ for(let t=0;t<10;t++){
+  h+=`<div class="head">${t}</div>`;
+  for(let u=0;u<10;u++){
+   const n=t*10+u,c=s.freq2[n];
+   h+=`<div class="cell" title="${pad2(n)} — ${c} වාර" style="background:${heatColor(c,max,min)}" data-num="${pad2(n)}">${pad2(n)}</div>`;
+  }
+ }
+ $("heatmap").innerHTML=h;
+ document.querySelectorAll(".heat .cell").forEach(c=>c.addEventListener("click",()=>explore(c.dataset.num)));
+}
+
+/* =========================
+   BASIC ANALYTICS
+   ========================= */
+function bars(items,max){
+ return items.map(x=>`<div class="row"><span class="num">${esc(x.label)}</span><div class="track"><div class="fill ${x.hot?"hot":""} ${x.cold?"cold":""}" style="width:${max?x.value/max*100:0}%"></div></div><span class="count">${x.value}</span></div>`).join("");
+}
+function renderAnalytics(data,s){
+ const ditems=s.freq1.map((v,i)=>({label:i,value:v}));
+ const dmax=Math.max(...s.freq1,1);
+ $("digitBars").innerHTML=bars(ditems.map(x=>({...x,hot:x.value===dmax,cold:x.value===Math.min(...s.freq1)})),dmax);
+
+ const rmax=Math.max(...s.ranges,1);
+ $("rangeBars").innerHTML=bars(s.ranges.map((v,i)=>({label:`${pad2(i*10)}–${pad2(i*10+9)}`,value:v,hot:v===Math.max(...s.ranges),cold:v===Math.min(...s.ranges)})),rmax);
+
+ const names=["ඉරිදා","සඳුදා","අඟහරුවාදා","බදාදා","බ්‍රහස්පතින්දා","සිකුරාදා","සෙනසුරාදා"];
+ const wmax=Math.max(...s.weekday,1);
+ $("weekdayBars").innerHTML=bars(s.weekday.map((v,i)=>({label:names[i],value:v})),wmax);
+
+ $("balanceBars").innerHTML=bars([
+  {label:"Even 0–98",value:s.even},{label:"Odd 1–99",value:s.odd},
+  {label:"High 50–99",value:s.high},{label:"Low 00–49",value:s.low}
+ ],Math.max(s.even,s.odd,s.high,s.low,1));
+
+ renderTrend(data);
+}
+function drawWindows(data,window){
+ const sorted=[...data].sort((a,b)=>(a.date?.getTime()||0)-(b.date?.getTime()||0));
+ const labels=[],vals=[];
+ for(let i=0;i<sorted.length;i++){
+  const start=Math.max(0,i-window+1),slice=sorted.slice(start,i+1);
+  labels.push(niceDate(sorted[i].date));vals.push(slice.length);
+ }
+ return {labels,vals};
+}
+function renderTrend(data){
+ const ctx=$("trendChart").getContext("2d");
+ if(trendChart)trendChart.destroy();
+ const w7=drawWindows(data,7),w14=drawWindows(data,14),w30=drawWindows(data,30),w60=drawWindows(data,60);
+ let labels=w60.labels.slice(-90),take=(a)=>a.vals.slice(-90);
+ trendChart=new Chart(ctx,{type:"line",data:{labels,datasets:[
+  {label:"7",data:take(w7),borderColor:"#65e6ad",pointRadius:0,tension:.25,borderWidth:2},
+  {label:"14",data:take(w14),borderColor:"#ffd166",pointRadius:0,tension:.25,borderWidth:2},
+  {label:"30",data:take(w30),borderColor:"#4da3ff",pointRadius:0,tension:.25,borderWidth:2},
+  {label:"60",data:take(w60),borderColor:"#b89cff",pointRadius:0,tension:.25,borderWidth:2}
+ ]},options:{responsive:true,plugins:{legend:{labels:{color:"#9fb3c8"}}},scales:{x:{ticks:{color:"#70849a",maxTicksLimit:10},grid:{display:false}},y:{beginAtZero:true,ticks:{color:"#70849a"},grid:{color:"rgba(255,255,255,.05)"}}}}});
+}
+
+/* =========================
+   GAP / PATTERNS
+   ========================= */
+function currentGaps(data,s){
+ const latest=data.filter(x=>x.date).sort((a,b)=>b.date-a.date)[0]?.date||new Date();
+ return Array.from({length:100},(_,n)=>{
+  const arr=s.positions[n].filter(x=>x.date).sort((a,b)=>b.date-a.date);
+  let gap=null;
+  if(arr.length){
+   gap=Math.max(0,Math.round((latest-arr[0].date)/86400000));
+  }else gap=data.length;
+  return {num:n,gap,last:arr[0]?.date||null,count:arr.length};
+ }).sort((a,b)=>b.gap-a.gap);
+}
+function renderPatterns(data,s){
+ const gaps=currentGaps(data,s);
+ $("gapList").innerHTML=gaps.slice(0,20).map(x=>`<div class="item"><span class="num">${pad2(x.num)}</span><span>${x.count?`අවසාන වර: ${niceDate(x.last)}`:"මෙම range එකේ නැත"}</span><span class="badge">${x.gap} දින</span></div>`).join("");
+
+ const rp=[];
+ for(let n=0;n<100;n++){const rev=Number(pad2(n).split("").reverse().join(""));if(n<rev&&s.freq2[n]&&s.freq2[rev])rp.push({n,rev,a:s.freq2[n],b:s.freq2[rev]})}
+ rp.sort((a,b)=>(b.a+b.b)-(a.a+a.b));
+ $("reversePairs").innerHTML=rp.slice(0,20).map(x=>`<div class="item"><span class="num">${pad2(x.n)} ↔ ${pad2(x.rev)}</span><span>${x.a} + ${x.b} වාර</span><span class="badge">pair</span></div>`).join("")||`<div class="empty">Reverse pair data නැත.</div>`;
+
+ let repeats=0,consecutive=0;
+ const sorted=[...data].filter(x=>x.date&&cleanNumber(x.fullNumber)).sort((a,b)=>a.date-b.date);
+ for(let i=1;i<sorted.length;i++){
+  const a=suffix2(sorted[i-1].fullNumber),b=suffix2(sorted[i].fullNumber);
+  if(a===b)repeats++;
+  if(/^\d+$/.test(a)&&/^\d+$/.test(b)&&Math.abs(Number(a)-Number(b))===1)consecutive++;
+ }
+ const topSums=Array.from({length:19},(_,i)=>({label:i,value:s.sums[i]}));
+ $("patternSummary").innerHTML=`
+ <div class="pills">
+  <span class="pill green">🔁 Same 2-digit repeat: ${repeats}</span>
+  <span class="pill blue">↔ Consecutive: ${consecutive}</span>
+ </div>
+ <div class="note">Repeat/Consecutive කියන්නේ පසුගිය results වල තිබූ සිදුවීම් ගණනයි; ඒවා future draw එකේ නියමයක් ලෙස භාවිතා නොකරන්න.</div>`;
+ $("sumBars").innerHTML=bars(topSums,Math.max(...s.sums,1));
+
+ renderDateMatches(data);
+}
+function renderDateMatches(data){
+ const dayMatches=data.filter(x=>x.date&&/^\d{2}$/.test(suffix2(x.fullNumber))&&suffix2(x.fullNumber)===pad2(x.date.getDate()));
+ $("dateMatch").innerHTML=`<div class="pills" style="margin-bottom:10px"><span class="pill green">🎯 ${dayMatches.length} matches</span><span class="badge">දිනයේ අග 2 = result අග 2</span></div>`+
+ (dayMatches.slice(0,100).map(x=>`<div class="item"><span>${niceDate(x.date)}</span><span class="num"># ${esc(x.fullNumber)}</span><span class="badge">${suffix2(x.fullNumber)}</span></div>`).join("")||`<div class="empty">ගැළපීම් නැත.</div>`);
+
+ const idMatches=data.filter(x=>x.id&&suffix2(x.id)===suffix2(x.fullNumber));
+ $("idMatch").innerHTML=`<div class="pills" style="margin-bottom:10px"><span class="pill green">🎯 ${idMatches.length} matches</span><span class="badge">Draw ID අග 2 = result අග 2</span></div>`+
+ (idMatches.slice(0,100).map(x=>`<div class="item"><span>${esc(x.id)}</span><span class="num"># ${esc(x.fullNumber)}</span><span class="badge">${suffix2(x.fullNumber)}</span></div>`).join("")||`<div class="empty">ගැළපීම් නැත.</div>`);
+}
+
+/* =========================
+   SEARCH
+   ========================= */
+function renderSearch(){
+ const rawTerm=cleanNumber($("searchInput").value);
+ const term=rawTerm.slice(-2);
+ const searchDigits=rawTerm.length===1?1:2;
+ const searchValue=searchDigits===1?suffix1(term):suffix2(term);
+ const data=activeData();
+ const filtered=rawTerm?data.filter(x=>(searchDigits===1?suffix1(x.fullNumber):suffix2(x.fullNumber))===searchValue):data;
+ $("resultCount").textContent=filtered.length.toLocaleString();
+ $("searchResults").innerHTML=filtered.length?filtered.slice(0,2000).map(x=>`
+ <div class="result">
+  <div>
+   <div class="big"># ${term ? highlightSuffix(x.fullNumber, searchDigits, true) : highlightLast2(x.fullNumber)}</div>
+   <div class="date-pink" style="margin-top:5px">📅 ${niceDate(x.date)}</div>
+   <div style="color:#ffd166;font-size:13px;font-weight:800;margin-top:2px">${esc(x.numberId || "—")}</div>
+  </div>
+ </div>`).join(""):`<div class="empty"><i class="fas fa-search-minus"></i><p>ගැළපෙන ප්‍රතිඵල හමු නොවීය.</p></div>`;
+ if(filtered.length>2000)$("searchResults").insertAdjacentHTML("afterbegin",`<div class="note">පළමු 2,000 results පමණක් පෙන්වයි.</div>`);
+}
+
+/* =========================
+   NUMBER EXPLORER
+   ========================= */
+function numberInfo(num,data,s){
+ num=Number(num);if(!Number.isInteger(num)||num<0||num>99)return null;
+ const arr=s.positions[num].filter(x=>x.date).sort((a,b)=>b.date-a.date);
+ const latest=data.filter(x=>x.date).sort((a,b)=>b.date-a.date)[0]?.date;
+ let avg=null,maxGap=0;
+ const dates=arr.map(x=>x.date).sort((a,b)=>a-b);
+ const gaps=[];
+ for(let i=1;i<dates.length;i++)gaps.push(Math.round((dates[i]-dates[i-1])/86400000));
+ if(gaps.length){avg=gaps.reduce((a,b)=>a+b,0)/gaps.length;maxGap=Math.max(...gaps)}
+ const current=arr.length&&latest?Math.max(0,Math.round((latest-arr[0].date)/86400000)):data.length;
+ return {num,freq:s.freq2[num],last:arr[0]?.date||null,current,avg,maxGap,dates,arr};
+}
+function explore(v){
+ const n=String(v).replace(/\D/g,"");if(n==="")return;
+ const info=numberInfo(n.slice(-2),activeData(),stats(activeData()));
+ if(!info){$("numberExplorer").innerHTML=`<div class="empty">00–99 අතර අංකයක් දෙන්න.</div>`;return}
+ $("numberExplorer").innerHTML=`
+ <div class="stats" style="margin-top:12px">
+  <div class="stat glass"><div class="label">Number</div><div class="value">${pad2(info.num)}</div></div>
+  <div class="stat glass"><div class="label">Frequency</div><div class="value">${info.freq}</div></div>
+  <div class="stat glass"><div class="label">Current gap</div><div class="value">${info.current}d</div></div>
+  <div class="stat glass"><div class="label">Average gap</div><div class="value">${info.avg?info.avg.toFixed(1):"—"}</div></div>
+  <div class="stat glass"><div class="label">Longest gap</div><div class="value">${info.maxGap||"—"}</div></div>
+ </div>
+ <div class="card glass">
+  <h2><i class="fas fa-timeline"></i> ${pad2(info.num)} — Appearance Timeline</h2>
+  <div class="result-list">${info.arr.slice(0,100).map(x=>`<div class="result">
+  <div>
+   <div class="big"># ${highlightLast2(x.fullNumber)}</div>
+   <div style="margin-top:5px"><span class="date-pink">📅 ${niceDate(x.date)}</span><span style="color:#ffd166;font-size:13px;font-weight:700"> • ${esc(x.numberId || "—")}</span></div>
+  </div>
+ </div>`).join("")||`<div class="empty">මෙම range එකේ මෙම අංකය හමු නොවීය.</div>`}</div>
+ </div>`;
+}
+function compareNumbers(){
+ const A=$("compareA").value.replace(/\D/g,"").slice(-2),B=$("compareB").value.replace(/\D/g,"").slice(-2);
+ const data=activeData(),s=stats(data),a=numberInfo(A,data,s),b=numberInfo(B,data,s);
+ if(!a||!b){$("compareResult").innerHTML=`<div class="error">අංක දෙකම 00–99 අතර විය යුතුයි.</div>`;return}
+ const line=(l,x,y)=>`<div class="compareline"><span>${l}</span><b>${x}</b><b>${y}</b></div>`;
+ $("compareResult").innerHTML=`
+ <div class="comparebox">
+  ${line("Frequency",a.freq,b.freq)}
+  ${line("Current gap (days)",a.current,b.current)}
+  ${line("Average gap",a.avg?a.avg.toFixed(1):"—",b.avg?b.avg.toFixed(1):"—")}
+  ${line("Longest gap",a.maxGap||"—",b.maxGap||"—")}
+  ${line("Last seen",a.last?niceDate(a.last):"—",b.last?niceDate(b.last):"—")}
+ </div>
+ <div class="note">මෙය historical comparison එකක් පමණි; අංකයක score එකක් හෝ future probability එකක් නොවේ.</div>`;
+}
+
+/* =========================
+   RANGE / UI
+   ========================= */
+async function applyRange(mode){
+ currentRange=mode;customStart=null;customEnd=null;
+ document.querySelectorAll(".range-btn").forEach(b=>b.classList.toggle("active",b.dataset.range===mode));
+ $("startDate").value="";$("endDate").value="";
+ await fetchData(mode);
+}
+async function applyCustom(){
+ const s=$("startDate").value,e=$("endDate").value;
+ if(!s||!e){alert("ආරම්භක සහ අවසාන දිනය දෙකම තෝරන්න.");return}
+ if(s>e){alert("ආරම්භක දිනය අවසාන දිනයට පෙර විය යුතුයි.");return}
+ customStart=s;customEnd=e;currentRange="custom";
+ document.querySelectorAll(".range-btn").forEach(b=>b.classList.remove("active"));
+ await fetchData("custom");
+}
+function renderAll(){
+ const data=activeData(),s=stats(data);
+ renderOverview(data,s);renderHeatmap(s);renderAnalytics(data,s);renderPatterns(data,s);renderSearch();
+ const explorer=$("numberExplorerInput").value.trim();if(explorer)explore(explorer);
+ const a=$("compareA").value,b=$("compareB").value;if(a&&b)compareNumbers();
+}
+
+/* =========================
+   VIEW COUNTER
+   ========================= */
+async function logMahajanaView(){
+ const today=dayKey(new Date());
+ try{
+  await db.collection("analytics").doc(today).set({mahajana_view_web:firebase.firestore.FieldValue.increment(1)},{merge:true});
+  const d=await db.collection("analytics").doc(today).get();
+  $("todayViews").textContent=d.exists?(d.data().mahajana_view_web||0):0;
+ }catch(e){$("todayViews").textContent="—";console.warn(e)}
+}
+
+/* =========================
+   EVENTS
+   ========================= */
+document.querySelectorAll(".range-btn").forEach(b=>b.addEventListener("click",()=>applyRange(b.dataset.range)));
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));
+ b.classList.add("active");$("tab-"+b.dataset.tab).classList.add("active");
+}));
+$("customBtn").addEventListener("click",applyCustom);
+$("resetRange").addEventListener("click",()=>applyRange("all"));
+$("searchBtn").addEventListener("click",renderSearch);
+$("clearSearch").addEventListener("click",()=>{$("searchInput").value="";renderSearch()});
+$("searchInput").addEventListener("input",()=>{clearTimeout(window.__searchTimer);window.__searchTimer=setTimeout(renderSearch,250)});
+$("exploreBtn").addEventListener("click",()=>explore($("numberExplorerInput").value));
+$("numberExplorerInput").addEventListener("keypress",e=>{if(e.key==="Enter")explore(e.target.value)});
+$("compareBtn").addEventListener("click",compareNumbers);
+
+
+</script>
 </body>
 </html>
